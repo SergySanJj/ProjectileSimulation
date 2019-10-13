@@ -20,7 +20,6 @@ public class MainWindow extends SimpleApplication {
         app.setSettings(settings);
 
         app.start();
-
     }
 
     @Override
