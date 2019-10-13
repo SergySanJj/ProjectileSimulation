@@ -1,19 +1,13 @@
 import com.sun.javafx.geom.Vec2f;
 
-class DotParams {
-    public DotParams(Vec2f startPos, float startAngle, float startSpeed) {
-        this.startPos = startPos;
-        this.startAngle = startAngle;
-        this.startSpeed = startSpeed;
+class Trajectory {
+    public static Vec2f getCoords(DotParams params, float currentTime, float g) {
+
+        return new Vec2f(0.0f, 0.0f);
     }
 
-    public final Vec2f startPos;
-    public final float startAngle;
-    public final float startSpeed;
-}
-
-class Trajectory {
     public static Vec2f getCoords(DotParams params, float currentTime) {
-        return new Vec2f(1.0f, 1.0f);
+        float g = 9.81f;
+        return getCoords(params, currentTime, g);
     }
 }
