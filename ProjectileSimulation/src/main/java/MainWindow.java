@@ -10,9 +10,13 @@ public class MainWindow extends SimpleApplication {
     public static void main(String[] args) {
 
         MainWindow app = new MainWindow();
+        app.setShowSettings(false);
 
         AppSettings settings = new AppSettings(true);
-        settings.setTitle("My Awesome Game");
+
+        settings.setTitle("Projectile simulation");
+        settings.setHeight(800);
+        settings.setWidth(1000);
         app.setSettings(settings);
 
         app.start();
