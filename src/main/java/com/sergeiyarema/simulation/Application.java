@@ -10,15 +10,20 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.system.AppSettings;
 
+
 public class Application extends SimpleApplication {
-    private static final int HEIGHT = 800;
-    private static final int WIDTH = 1000;
+    private static final int WINDOW_HEIGHT = 800;
+    private static final int WINDOW_WIDTH = 1000;
 
     private static float currStartAngle = 45.f;
     private static float currStartSpeed = 1.f;
 
-    private static final DotParams DEFAULT_DOT_PARAMS =
-            new DotParams(new Vector2f(0.f, 0.f), 0.f, 1.f);
+    private Material matRed, matBlue;
+    private Projectile pr;
+    private Floor fl;
+
+    private DotParams currentParams =
+            new DotParams(new Vector2f(0.f, 0.f), 45.f, 0.05f);
 
     private float cameraSize = 4f;
 
@@ -32,21 +37,10 @@ public class Application extends SimpleApplication {
         initCameraSettings();
         initKeys();
         viewPort.setBackgroundColor(ColorRGBA.White);
-
         inputManager.setCursorVisible(true);
+        initMaterials();
 
-        Material matRed = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        matRed.setColor("Color", ColorRGBA.Red);
-        Material matBlue = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        matBlue.setColor("Color", ColorRGBA.Blue);
-
-        Projectile pr = new Projectile(new DotParams(new Vector2f(0.f, 0.f), 0.f, 10.f));
-        pr.setMaterial(matBlue);
-        rootNode.attachChild(pr);
-
-        Floor floor = new Floor();
-        floor.setMaterial(matRed);
-        rootNode.attachChild(floor);
+        fl = createFloor();
     }
 
     private void initCameraSettings() {
@@ -106,16 +100,19 @@ public class Application extends SimpleApplication {
             } else if (name.equals("ZoomOUT") && !keyPressed) {
                 zoom(1.1f);
             } else if (name.equals("CamRight") && !keyPressed) {
-                horizontalCamMove(-1.f);
-            } else if (name.equals("CamLeft") && !keyPressed) {
                 horizontalCamMove(1.f);
+            } else if (name.equals("CamLeft") && !keyPressed) {
+                horizontalCamMove(-1.f);
+            } else if (name.equals("Fire") && !keyPressed) {
+                fire();
             }
         }
     };
 
     @Override
     public void simpleUpdate(float tpf) {
-
+        if (pr != null)
+            pr.updateMove(tpf);
     }
 
     private AppSettings getBuildSettings() {
@@ -123,8 +120,37 @@ public class Application extends SimpleApplication {
 
         AppSettings settings = new AppSettings(true);
         settings.setTitle("Projectile simulation");
-        settings.setHeight(HEIGHT);
-        settings.setWidth(WIDTH);
+        settings.setHeight(WINDOW_HEIGHT);
+        settings.setWidth(WINDOW_WIDTH);
         return settings;
     }
+
+    private Projectile createProjectile() {
+        Projectile projectile = new Projectile(currentParams);
+        projectile.setMaterial(matBlue);
+        rootNode.attachChild(projectile);
+
+        return projectile;
+    }
+
+    private Floor createFloor() {
+        Floor floor = new Floor();
+        floor.setMaterial(matRed);
+        rootNode.attachChild(floor);
+
+        return floor;
+    }
+
+    private void initMaterials() {
+        matRed = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        matRed.setColor("Color", ColorRGBA.Red);
+        matBlue = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        matBlue.setColor("Color", ColorRGBA.Blue);
+    }
+
+    private void fire() {
+        pr = createProjectile();
+        System.out.println("fire");
+    }
+
 }

@@ -7,14 +7,17 @@ public class Trajectory {
     }
 
     public static Vector2f getCoords(DotParams params, float currentTime, float g) {
+        float scale = 10.f;
         float y0 = params.getStartPos().y;
         float x0 = params.getStartPos().x;
         float alpha = (float) Math.toRadians(params.getStartAngle());
         float vx = (float) (params.getStartSpeed() * Math.cos(alpha));
         float vy = (float) (params.getStartSpeed() * Math.sin(alpha));
-        float x = x0 + currentTime * vx;
-        float y = y0 + currentTime * vy - g * currentTime * currentTime / 2.f;
-        return new Vector2f(x, y);
+        float x = currentTime * vx;
+        float y = currentTime * vy - g * currentTime * currentTime / 2.f;
+        x *= scale;
+        y *= scale;
+        return new Vector2f(x0 + x, y0 + y);
     }
 
     public static Vector2f getCoords(DotParams params, float currentTime) {
