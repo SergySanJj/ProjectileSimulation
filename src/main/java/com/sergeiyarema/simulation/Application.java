@@ -10,22 +10,21 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.system.AppSettings;
 
+import java.lang.ref.WeakReference;
+
 
 public class Application extends SimpleApplication {
     private static final int WINDOW_HEIGHT = 800;
     private static final int WINDOW_WIDTH = 1000;
-
-    private static float currStartAngle = 45.f;
-    private static float currStartSpeed = 1.f;
 
     private Material matRed, matBlue;
     private Projectile pr;
     private Floor fl;
 
     private DotParams currentParams =
-            new DotParams(new Vector2f(0.f, 0.f), 45.f, 0.05f);
+            new DotParams(new Vector2f(0.f, 0.f), 45.f, 0.05f, 9.80665f);
 
-    private float cameraSize = 4f;
+    private float cameraSize = 12f;
 
     public Application() {
         super(null);
@@ -39,6 +38,7 @@ public class Application extends SimpleApplication {
         viewPort.setBackgroundColor(ColorRGBA.White);
         inputManager.setCursorVisible(true);
         initMaterials();
+        horizontalCamMove(13.f);
 
         fl = createFloor();
     }
@@ -76,8 +76,8 @@ public class Application extends SimpleApplication {
 
         inputManager.addMapping("Fire", new KeyTrigger(KeyInput.KEY_F));
 
-        inputManager.addMapping("IncreaseGravity", new KeyTrigger(KeyInput.KEY_I));
-        inputManager.addMapping("DecreaseGravity", new KeyTrigger(KeyInput.KEY_U));
+        inputManager.addMapping("IncreaseGravity", new KeyTrigger(KeyInput.KEY_U));
+        inputManager.addMapping("DecreaseGravity", new KeyTrigger(KeyInput.KEY_I));
 
         inputManager.addMapping("CamRight", new KeyTrigger(KeyInput.KEY_RIGHT));
         inputManager.addMapping("CamLeft", new KeyTrigger(KeyInput.KEY_LEFT));
@@ -103,6 +103,14 @@ public class Application extends SimpleApplication {
                 horizontalCamMove(1.f);
             } else if (name.equals("CamLeft") && !keyPressed) {
                 horizontalCamMove(-1.f);
+            } else if (name.equals("IncreaseGravity") && !keyPressed) {
+                changeGravity(1.f);
+            } else if (name.equals("DecreaseGravity") && !keyPressed) {
+                changeGravity(-1.f);
+            } else if (name.equals("IncreaseAngle") && !keyPressed) {
+                changeAngle(5f);
+            } else if (name.equals("DecreaseAngle") && !keyPressed) {
+                changeAngle(-5f);
             } else if (name.equals("Fire") && !keyPressed) {
                 fire();
             }
@@ -111,8 +119,6 @@ public class Application extends SimpleApplication {
 
     @Override
     public void simpleUpdate(float tpf) {
-        if (pr != null)
-            pr.updateMove(tpf);
     }
 
     private AppSettings getBuildSettings() {
@@ -126,17 +132,12 @@ public class Application extends SimpleApplication {
     }
 
     private Projectile createProjectile() {
-        Projectile projectile = new Projectile(currentParams);
-        projectile.setMaterial(matBlue);
-        rootNode.attachChild(projectile);
-
+        Projectile projectile = new Projectile(currentParams, rootNode, assetManager);
         return projectile;
     }
 
     private Floor createFloor() {
-        Floor floor = new Floor();
-        floor.setMaterial(matRed);
-        rootNode.attachChild(floor);
+        Floor floor = new Floor(rootNode, assetManager);
 
         return floor;
     }
@@ -149,8 +150,26 @@ public class Application extends SimpleApplication {
     }
 
     private void fire() {
+        if (pr != null) {
+            WeakReference<Projectile> wr = new WeakReference<>(pr);
+            pr.destroy();
+            pr = null;
+        }
         pr = createProjectile();
         System.out.println("fire");
+    }
+
+    private void changeGravity(float delta) {
+        currentParams.setGravity(currentParams.getGravity() + delta);
+    }
+
+    private void changeAngle(float delta) {
+        currentParams.setStartAngle(currentParams.getStartAngle() + delta);
+    }
+
+
+    private void changeSpeed(float delta) {
+        currentParams.setStartSpeed(currentParams.getStartSpeed() + delta);
     }
 
 }

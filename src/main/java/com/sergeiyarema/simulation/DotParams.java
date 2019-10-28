@@ -6,15 +6,17 @@ public class DotParams {
     private DotParams() {
     }
 
-    public DotParams(Vector2f startPos, float startAngle, float startSpeed) {
+    public DotParams(Vector2f startPos, float startAngle, float startSpeed, float gravity) {
         this.startPos = startPos;
         this.startAngle = startAngle;
         this.startSpeed = startSpeed;
+        this.gravity = gravity;
     }
 
     private Vector2f startPos;
     private float startAngle;
     private float startSpeed;
+    private float gravity;
 
     public Vector2f getStartPos() {
         return startPos;
@@ -38,5 +40,13 @@ public class DotParams {
 
     public void setStartSpeed(float startSpeed) {
         this.startSpeed = startSpeed;
+    }
+
+    public float getGravity() {
+        return gravity;
+    }
+
+    public void setGravity(float gravity) {
+        this.gravity = gravity;
     }
 }

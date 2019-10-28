@@ -18,6 +18,7 @@ public class Trajectory {
         x *= scale;
         y *= scale;
         return new Vector2f(x0 + x, y0 + y);
+
     }
 
     public static Vector2f getCoords(DotParams params, float currentTime) {
