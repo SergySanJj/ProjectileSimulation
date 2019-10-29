@@ -8,20 +8,24 @@ import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 
 public class Floor {
-    private static final float HEIGHT = 2.f;
-    private static final float WIDTH = 100.f;
+    public static final float HEIGHT = 2.f;
+    public static final float WIDTH = 100.f;
 
     private Geometry geometry;
 
-    Floor(Node rootNode) {
+    Floor(Node rootNode, float topCoordinate) {
         Material matRed = new Material(GlobalAssets.manager(), "Common/MatDefs/Misc/Unshaded.j3md");
         matRed.setColor("Color", ColorRGBA.Red);
 
         geometry = new Geometry("Box", new Box(WIDTH, HEIGHT, 1.f));
-        geometry.move(new Vector3f(0.f, -5.f, 0.f));
+        geometry.move(new Vector3f(0.f, topCoordinate - HEIGHT, 0.f));
         rootNode.attachChild(geometry);
 
         geometry.setMaterial(matRed);
+    }
+
+    public float getTopCoordinate() {
+        return geometry.getLocalTranslation().y + HEIGHT;
     }
 
 }

@@ -11,7 +11,7 @@ import static com.sergeiyarema.simulation.DotParams.*;
 
 public class DotParamsTest {
     private static final DotParams dotParamsOriginal =
-            new DotParams(new Vector3f(1f, 1f, 1f), 45.f, 10f, 9f);
+            new DotParams(new Vector3f(1f, 1f, 1f), 45.f, 10f, -3f, 9f);
 
     @Test
     public void copy() {
@@ -38,6 +38,7 @@ public class DotParamsTest {
     public void get() {
         Assert.assertEquals(dotParamsOriginal.get(START_ANGLE), 45.f, 0.001);
         Assert.assertEquals(dotParamsOriginal.get(START_SPEED), 10.f, 0.001);
+        Assert.assertEquals(dotParamsOriginal.get(GROUND_LEVEL), -3.f, 0.001);
         Assert.assertEquals(dotParamsOriginal.get(GRAVITY), 9f, 0.001);
     }
 
@@ -54,6 +55,7 @@ public class DotParamsTest {
     public void getChangeable() {
         Assert.assertEquals(dotParamsOriginal.getChangeable(START_ANGLE).getValue(), 45.f, 0.001);
         Assert.assertEquals(dotParamsOriginal.getChangeable(START_SPEED).getValue(), 10.f, 0.001);
+        Assert.assertEquals(dotParamsOriginal.getChangeable(GROUND_LEVEL).getValue(), -3.f, 0.001);
         Assert.assertEquals(dotParamsOriginal.getChangeable(GRAVITY).getValue(), 9f, 0.001);
     }
 
@@ -81,7 +83,7 @@ public class DotParamsTest {
         DotParams dotParamsB = dotParamsOriginal.copy();
 
         DotParams different =
-                new DotParams(new Vector3f(0f, 0f, 0f), 45.f, 10f, 9f);
+                new DotParams(new Vector3f(0f, 0f, 0f), 45.f, 10f, -10f, 9f);
 
         Assert.assertNotEquals(0, different.compareTo(dotParamsA));
         Assert.assertEquals(0, different.compareTo(different));

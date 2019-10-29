@@ -28,7 +28,11 @@ public class ApplicationControls {
     private static final String DECREASE_SPEED = "DecreaseSpeed";
     private static final String CAM_RIGHT = "CamRight";
     private static final String CAM_LEFT = "CamLeft";
+    private static final String CAM_UP = "CamUp";
+    private static final String CAM_DOWN = "CamDown";
     private static final String CLEAR = "Clear";
+
+    private static final float GROUND = -5f;
 
     private InputManager inputManager;
     private Camera cam;
@@ -36,8 +40,9 @@ public class ApplicationControls {
 
     private float cameraSize = 14f;
     private Projectile pr;
+
     private DotParams currentParams =
-            new DotParams(new Vector3f(-14.f, -2.5f, 0.f), 45.f, 20f, 9.80665f);
+            new DotParams(new Vector3f(-14.f, GROUND + 0.5f, 0.f), 45.f, 20f, GROUND, 9.80665f);
 
     private ApplicationControls() {
     }
@@ -50,11 +55,15 @@ public class ApplicationControls {
         initCameraSettings();
         inputManager.setCursorVisible(true);
         initKeys();
+
+        Floor fl = new Floor(rootNode, GROUND);
     }
 
     private void initCameraSettings() {
         cam.setParallelProjection(true);
         updateCameraFrustum();
+
+
     }
 
     private void updateCameraFrustum() {
@@ -62,6 +71,7 @@ public class ApplicationControls {
         cam.setFrustum(-1000, 1000,
                 -aspect * cameraSize, aspect * cameraSize,
                 cameraSize, -cameraSize);
+        setCamY(cameraSize + GROUND - 1.5f); // Interpolated linear formula
     }
 
     private void zoom(float scale) {
@@ -72,6 +82,18 @@ public class ApplicationControls {
     private void horizontalCamMove(float delta) {
         Vector3f currLocation = cam.getLocation();
         currLocation.x += delta;
+        cam.setLocation(currLocation);
+    }
+
+    private void verticalCamMove(float delta) {
+        Vector3f currLocation = cam.getLocation();
+        currLocation.y += delta;
+        cam.setLocation(currLocation);
+    }
+
+    private void setCamY(float y) {
+        Vector3f currLocation = cam.getLocation();
+        currLocation.y = y;
         cam.setLocation(currLocation);
     }
 
@@ -92,6 +114,8 @@ public class ApplicationControls {
 
         inputManager.addMapping(CAM_RIGHT, new KeyTrigger(KeyInput.KEY_RIGHT));
         inputManager.addMapping(CAM_LEFT, new KeyTrigger(KeyInput.KEY_LEFT));
+        inputManager.addMapping(CAM_UP, new KeyTrigger(KeyInput.KEY_UP));
+        inputManager.addMapping(CAM_DOWN, new KeyTrigger(KeyInput.KEY_DOWN));
 
         inputManager.addMapping(CLEAR, new KeyTrigger(KeyInput.KEY_DELETE));
 
@@ -103,7 +127,7 @@ public class ApplicationControls {
                 CLEAR);
         inputManager.addListener(analogListener,
                 ZOOM_IN, ZOOM_OUT,
-                CAM_LEFT, CAM_RIGHT);
+                CAM_LEFT, CAM_RIGHT, CAM_UP, CAM_DOWN);
     }
 
     private final AnalogListener analogListener = (name, value, tpf) -> {
@@ -120,9 +144,16 @@ public class ApplicationControls {
             case CAM_LEFT:
                 horizontalCamMove(-10.f * cameraSize * value);
                 break;
+            case CAM_UP:
+                verticalCamMove(10.f * cameraSize * value);
+                break;
+            case CAM_DOWN:
+                verticalCamMove(-10.f * cameraSize * value);
+                break;
             default:
                 break;
         }
+        System.out.println("Cam coords " + cam.getLocation().y + " zoom " + cameraSize);
     };
 
     private final ActionListener actionListener = (name, keyPressed, tpf) -> {

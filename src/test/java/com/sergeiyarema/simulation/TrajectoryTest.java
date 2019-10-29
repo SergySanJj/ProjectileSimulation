@@ -27,7 +27,7 @@ public class TrajectoryTest {
     }
 
     private boolean translationCase(Vector3f translation, float g) {
-        DotParams dotParams = new DotParams(translation, 45.f, 10f, g);
+        DotParams dotParams = new DotParams(translation, 45.f, 10f, -3f, g);
         return
                 isIdentical(new Vector3f(0.f, 0.f, 0.f).add(translation), Trajectory.getCoords(dotParams, 0.f)) &&
                         isIdentical(new Vector3f(10.196f, -0.003f, 0.f).add(translation), Trajectory.getCoords(dotParams, 1.442f));
@@ -44,7 +44,7 @@ public class TrajectoryTest {
     }
 
     private boolean trajectoryFromX(Vector3f translation, float time, float g) {
-        DotParams dotParams = new DotParams(translation, 45.f, 10f, g);
+        DotParams dotParams = new DotParams(translation, 45.f, 10f,-3f, g);
         Vector3f actualNewCoords = Trajectory.getCoords(dotParams, time);
         Vector3f dotCoords = Trajectory.getCoordsFromXValue(dotParams, actualNewCoords.x);
         return isIdentical(dotCoords, actualNewCoords);

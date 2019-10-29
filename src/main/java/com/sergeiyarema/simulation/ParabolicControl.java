@@ -13,6 +13,8 @@ import com.jme3.scene.shape.Sphere;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.sergeiyarema.simulation.DotParams.*;
+
 public class ParabolicControl extends AbstractControl {
     private static final int MAX_TRAILS = 5;
     private static List<List<Spatial>> trailsList = new ArrayList<>();
@@ -20,7 +22,6 @@ public class ParabolicControl extends AbstractControl {
     private List<Spatial> currentTrail;
     private DotParams params;
     private float totalTime;
-    private static final float FLOOR_LEVEL = -2.5f;
     private static final float INTERVAL = 0.5f;
 
     private Integer lastSpawnedX;
@@ -41,7 +42,7 @@ public class ParabolicControl extends AbstractControl {
     protected void controlUpdate(float tpf) {
         totalTime += tpf * 2.f;
         Vector3f newCoords = Trajectory.getCoords(params, totalTime);
-        if (newCoords.y > FLOOR_LEVEL) {
+        if (isAboveGround(newCoords)) {
             spatial.setLocalTranslation(newCoords);
 
             if ((int) (newCoords.x / INTERVAL) != lastSpawnedX) {
@@ -52,6 +53,10 @@ public class ParabolicControl extends AbstractControl {
         } else {
             spatial.removeControl(this);
         }
+    }
+
+    private boolean isAboveGround(Vector3f coords) {
+        return coords.y - params.get(GROUND_LEVEL) >= params.get(RADIUS);
     }
 
     private void spawnTrajectoryPoint() {

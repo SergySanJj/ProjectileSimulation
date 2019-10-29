@@ -6,22 +6,24 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Sphere;
 
-public class Projectile {
-    private static final float RADIUS = 0.5f;
+import static com.sergeiyarema.simulation.DotParams.RADIUS;
 
+public class Projectile {
     private DotParams dotParams;
     private Geometry geometry;
     private ParabolicControl control;
+
 
     private Projectile() {
     }
 
     public Projectile(DotParams dotParams, Node rootNode) {
+
         Material matBlue = new Material(GlobalAssets.manager(), "Common/MatDefs/Misc/Unshaded.j3md");
         matBlue.setColor("Color", ColorRGBA.Blue);
         geometry =
                 new Geometry("Projectile",
-                        new Sphere(32, 32, RADIUS, true, false));
+                        new Sphere(32, 32, dotParams.get(RADIUS), true, false));
         geometry.setMaterial(matBlue);
         this.dotParams = dotParams;
         rootNode.attachChild(geometry);

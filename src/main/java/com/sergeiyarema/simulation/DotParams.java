@@ -9,6 +9,8 @@ public class DotParams implements Copiable<DotParams>, Comparable<DotParams> {
     public static final String GRAVITY = "Gravity";
     public static final String START_ANGLE = "StartAngle";
     public static final String START_SPEED = "StartSpeed";
+    public static final String GROUND_LEVEL = "GroundLevel";
+    public static final String RADIUS = "Radius";
 
     private Map<String, ChangeableByDelta> mapping = new HashMap<>();
     private Vector3f startPos;
@@ -16,16 +18,18 @@ public class DotParams implements Copiable<DotParams>, Comparable<DotParams> {
     private DotParams() {
     }
 
-    public DotParams(Vector3f startPos, float startAngle, float startSpeed, float gravity) {
+    public DotParams(Vector3f startPos, float startAngle, float startSpeed, float groundLevel, float gravity) {
         this.startPos = startPos.clone();
         set(START_ANGLE, startAngle);
         set(START_SPEED, startSpeed);
         set(GRAVITY, gravity);
+        set(GROUND_LEVEL, groundLevel);
+        set(RADIUS, 0.5f);
     }
 
     @Override
     public DotParams copy() {
-        return new DotParams(startPos, get(START_ANGLE), get(START_SPEED), get(GRAVITY));
+        return new DotParams(startPos, get(START_ANGLE), get(START_SPEED), get(GROUND_LEVEL), get(GRAVITY));
     }
 
     public Vector3f getStartPos() {
