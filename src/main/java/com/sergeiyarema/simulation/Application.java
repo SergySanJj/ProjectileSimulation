@@ -79,6 +79,9 @@ public class Application extends SimpleApplication {
         inputManager.addMapping("IncreaseGravity", new KeyTrigger(KeyInput.KEY_U));
         inputManager.addMapping("DecreaseGravity", new KeyTrigger(KeyInput.KEY_I));
 
+        inputManager.addMapping("IncreaseSpeed", new KeyTrigger(KeyInput.KEY_X));
+        inputManager.addMapping("DecreaseSpeed", new KeyTrigger(KeyInput.KEY_Z));
+
         inputManager.addMapping("CamRight", new KeyTrigger(KeyInput.KEY_RIGHT));
         inputManager.addMapping("CamLeft", new KeyTrigger(KeyInput.KEY_LEFT));
 
@@ -88,8 +91,8 @@ public class Application extends SimpleApplication {
                 "IncreaseAngle", "DecreaseAngle",
                 "Fire",
                 "IncreaseGravity", "DecreaseGravity",
+                "IncreaseSpeed", "DecreaseSpeed",
                 "CamLeft", "CamRight");
-
     }
 
     private final ActionListener actionListener = new ActionListener() {
@@ -104,18 +107,26 @@ public class Application extends SimpleApplication {
             } else if (name.equals("CamLeft") && !keyPressed) {
                 horizontalCamMove(-1.f);
             } else if (name.equals("IncreaseGravity") && !keyPressed) {
-                changeGravity(1.f);
+                changeParamByDelta("Gravity", 1.f);
             } else if (name.equals("DecreaseGravity") && !keyPressed) {
-                changeGravity(-1.f);
+                changeParamByDelta("Gravity", -1.f);
             } else if (name.equals("IncreaseAngle") && !keyPressed) {
-                changeAngle(5f);
+                changeParamByDelta("StartAngle", 5.f);
             } else if (name.equals("DecreaseAngle") && !keyPressed) {
-                changeAngle(-5f);
+                changeParamByDelta("StartAngle", -5.f);
+            } else if (name.equals("IncreaseSpeed") && !keyPressed) {
+                changeParamByDelta("StartSpeed", 0.01f);
+            } else if (name.equals("DecreaseSpeed") && !keyPressed) {
+                changeParamByDelta("StartSpeed", -0.01f);
             } else if (name.equals("Fire") && !keyPressed) {
                 fire();
             }
         }
     };
+
+    private void changeParamByDelta(String paramName, float delta) {
+        this.currentParams.getChangeable(paramName).changeBy(delta);
+    }
 
     @Override
     public void simpleUpdate(float tpf) {
@@ -132,14 +143,11 @@ public class Application extends SimpleApplication {
     }
 
     private Projectile createProjectile() {
-        Projectile projectile = new Projectile(currentParams, rootNode, assetManager);
-        return projectile;
+        return new Projectile(currentParams, rootNode, assetManager);
     }
 
     private Floor createFloor() {
-        Floor floor = new Floor(rootNode, assetManager);
-
-        return floor;
+        return new Floor(rootNode, assetManager);
     }
 
     private void initMaterials() {
@@ -158,18 +166,4 @@ public class Application extends SimpleApplication {
         pr = createProjectile();
         System.out.println("fire");
     }
-
-    private void changeGravity(float delta) {
-        currentParams.setGravity(currentParams.getGravity() + delta);
-    }
-
-    private void changeAngle(float delta) {
-        currentParams.setStartAngle(currentParams.getStartAngle() + delta);
-    }
-
-
-    private void changeSpeed(float delta) {
-        currentParams.setStartSpeed(currentParams.getStartSpeed() + delta);
-    }
-
 }

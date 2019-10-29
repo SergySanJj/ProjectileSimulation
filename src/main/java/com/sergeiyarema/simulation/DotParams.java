@@ -2,21 +2,30 @@ package com.sergeiyarema.simulation;
 
 import com.jme3.math.Vector2f;
 
-public class DotParams {
+import java.util.HashMap;
+import java.util.Map;
+
+public class DotParams implements Copiable<DotParams> {
+    private Map<String, ChangeableByDelta> mapping = new HashMap<>();
+    private Vector2f startPos;
+
+
     private DotParams() {
     }
 
     public DotParams(Vector2f startPos, float startAngle, float startSpeed, float gravity) {
         this.startPos = startPos;
-        this.startAngle = startAngle;
-        this.startSpeed = startSpeed;
-        this.gravity = gravity;
+        set("StartAngle", startAngle);
+        set("StartSpeed", startSpeed);
+        set("Gravity", gravity);
     }
 
-    private Vector2f startPos;
-    private float startAngle;
-    private float startSpeed;
-    private float gravity;
+    @Override
+    public DotParams copy() {
+        DotParams paramsCopy =
+                new DotParams(startPos, get("StartAngle"), get("StartSpeed"), get("Gravity"));
+        return paramsCopy;
+    }
 
     public Vector2f getStartPos() {
         return startPos;
@@ -26,27 +35,17 @@ public class DotParams {
         this.startPos = startPos;
     }
 
-    public float getStartAngle() {
-        return startAngle;
+    public float get(String valueName) {
+        return getChangeable(valueName).getValue();
     }
 
-    public void setStartAngle(float startAngle) {
-        this.startAngle = startAngle;
+    public ChangeableByDelta getChangeable(String valueName) {
+        return mapping.get(valueName);
     }
 
-    public float getStartSpeed() {
-        return startSpeed;
-    }
-
-    public void setStartSpeed(float startSpeed) {
-        this.startSpeed = startSpeed;
-    }
-
-    public float getGravity() {
-        return gravity;
-    }
-
-    public void setGravity(float gravity) {
-        this.gravity = gravity;
+    public void set(String valueName, float newValue) {
+        ChangeableByDelta newChangeable = new ChangeableByDelta();
+        newChangeable.setValue(newValue);
+        mapping.put(valueName, newChangeable);
     }
 }

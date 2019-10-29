@@ -20,7 +20,7 @@ public class ParabollicControl extends AbstractControl {
     @Override
     protected void controlUpdate(float tpf) {
         totalTime += tpf / 100.f;
-        Vector2f newCoords = Trajectory.getCoords(params, totalTime, params.getGravity());
+        Vector2f newCoords = Trajectory.getCoords(params, totalTime, params.get("Gravity"));
         if (spatial.getLocalTranslation().y > floorLevel)
             spatial.move(newCoords.x, newCoords.y, 0.f);
 

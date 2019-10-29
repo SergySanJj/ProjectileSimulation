@@ -10,9 +10,9 @@ public class Trajectory {
         float scale = 10.f;
         float y0 = params.getStartPos().y;
         float x0 = params.getStartPos().x;
-        float alpha = (float) Math.toRadians(params.getStartAngle());
-        float vx = (float) (params.getStartSpeed() * Math.cos(alpha));
-        float vy = (float) (params.getStartSpeed() * Math.sin(alpha));
+        float alpha = (float) Math.toRadians(params.get("StartAngle"));
+        float vx = (float) (params.get("StartSpeed") * Math.cos(alpha));
+        float vy = (float) (params.get("StartSpeed") * Math.sin(alpha));
         float x = currentTime * vx;
         float y = currentTime * vy - g * currentTime * currentTime / 2.f;
         x *= scale;
