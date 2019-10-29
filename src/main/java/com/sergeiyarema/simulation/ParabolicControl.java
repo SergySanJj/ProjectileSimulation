@@ -23,7 +23,6 @@ public class ParabolicControl extends AbstractControl {
     private static final float FLOOR_LEVEL = -2.5f;
     private static final float INTERVAL = 0.5f;
 
-    private final Object mutex = new Object();
     private Integer lastSpawnedX;
 
     private ParabolicControl() {
@@ -31,7 +30,7 @@ public class ParabolicControl extends AbstractControl {
 
     public ParabolicControl(DotParams params) {
         super();
-        this.params = params;
+        this.params = params.copy();
         lastSpawnedX = (int) (params.getStartPos().x / INTERVAL);
         totalTime = 0.f;
         lastSpawnedX = 0;
@@ -44,12 +43,12 @@ public class ParabolicControl extends AbstractControl {
         Vector3f newCoords = Trajectory.getCoords(params, totalTime);
         if (newCoords.y > FLOOR_LEVEL) {
             spatial.setLocalTranslation(newCoords);
-            synchronized (mutex) {
-                if ((int) (newCoords.x / INTERVAL) != lastSpawnedX) {
-                    spawnTrajectoryPoint();
-                    lastSpawnedX = (int) (newCoords.x / INTERVAL);
-                }
+
+            if ((int) (newCoords.x / INTERVAL) != lastSpawnedX) {
+                lastSpawnedX = (int) (newCoords.x / INTERVAL) - 1;
+                spawnTrajectoryPoint();
             }
+
         } else {
             spatial.removeControl(this);
         }
@@ -60,7 +59,7 @@ public class ParabolicControl extends AbstractControl {
         matBlack.setColor("Color", ColorRGBA.Black);
         Geometry newPoint =
                 new Geometry("TrPoint",
-                        new Sphere(8, 8, 0.1f, true, false));
+                        new Sphere(4, 4, 0.1f, true, false));
         newPoint.setMaterial(matBlack);
         currentTrail.add(newPoint);
         spatial.getParent().attachChild(newPoint);
