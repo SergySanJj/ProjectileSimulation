@@ -5,23 +5,33 @@ import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
-import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
 
-import java.lang.ref.WeakReference;
 import java.util.List;
 
+import static com.sergeiyarema.simulation.DotParams.*;
 
 public class Application extends SimpleApplication {
     private static final int WINDOW_HEIGHT = 800;
     private static final int WINDOW_WIDTH = 1000;
 
-    private Material matRed, matBlue;
+    private static final String ZOOM_IN = "ZoomIN";
+    private static final String ZOOM_OUT = "ZoomOUT";
+    private static final String INCREASE_ANGLE = "IncreaseAngle";
+    private static final String DECREASE_ANGLE = "DecreaseAngle";
+    private static final String FIRE = "Fire";
+    private static final String INCREASE_GRAVITY = "IncreaseGravity";
+    private static final String DECREASE_GRAVITY = "DecreaseGravity";
+    private static final String INCREASE_SPEED = "IncreaseSpeed";
+    private static final String DECREASE_SPEED = "DecreaseSpeed";
+    private static final String CAM_RIGHT = "CamRight";
+    private static final String CAM_LEFT = "CamLeft";
+    private static final String CLEAR = "Clear";
+
     private Projectile pr;
-    private Floor fl;
 
     private DotParams currentParams =
             new DotParams(new Vector3f(-14.f, -2.5f, 0.f), 45.f, 20f, 9.80665f);
@@ -39,10 +49,9 @@ public class Application extends SimpleApplication {
         initKeys();
         viewPort.setBackgroundColor(ColorRGBA.White);
         inputManager.setCursorVisible(true);
-        initMaterials();
         horizontalCamMove(0.f);
         GlobalAssets.innitManager(this.assetManager);
-        fl = createFloor();
+        Floor fl = createFloor();
     }
 
     private void initCameraSettings() {
@@ -70,67 +79,87 @@ public class Application extends SimpleApplication {
 
     private void initKeys() {
         // You can map one or several inputs to one named action
-        inputManager.addMapping("ZoomIN", new KeyTrigger(KeyInput.KEY_EQUALS));
-        inputManager.addMapping("ZoomOUT", new KeyTrigger(KeyInput.KEY_MINUS));
+        inputManager.addMapping(ZOOM_IN, new KeyTrigger(KeyInput.KEY_EQUALS));
+        inputManager.addMapping(ZOOM_OUT, new KeyTrigger(KeyInput.KEY_MINUS));
 
-        inputManager.addMapping("IncreaseAngle", new KeyTrigger(KeyInput.KEY_W));
-        inputManager.addMapping("DecreaseAngle", new KeyTrigger(KeyInput.KEY_S));
+        inputManager.addMapping(INCREASE_ANGLE, new KeyTrigger(KeyInput.KEY_W));
+        inputManager.addMapping(DECREASE_ANGLE, new KeyTrigger(KeyInput.KEY_S));
 
-        inputManager.addMapping("Fire", new KeyTrigger(KeyInput.KEY_F));
+        inputManager.addMapping(FIRE, new KeyTrigger(KeyInput.KEY_F));
 
-        inputManager.addMapping("IncreaseGravity", new KeyTrigger(KeyInput.KEY_I));
-        inputManager.addMapping("DecreaseGravity", new KeyTrigger(KeyInput.KEY_U));
+        inputManager.addMapping(INCREASE_GRAVITY, new KeyTrigger(KeyInput.KEY_I));
+        inputManager.addMapping(DECREASE_GRAVITY, new KeyTrigger(KeyInput.KEY_U));
 
-        inputManager.addMapping("IncreaseSpeed", new KeyTrigger(KeyInput.KEY_X));
-        inputManager.addMapping("DecreaseSpeed", new KeyTrigger(KeyInput.KEY_Z));
+        inputManager.addMapping(INCREASE_SPEED, new KeyTrigger(KeyInput.KEY_X));
+        inputManager.addMapping(DECREASE_SPEED, new KeyTrigger(KeyInput.KEY_Z));
 
-        inputManager.addMapping("CamRight", new KeyTrigger(KeyInput.KEY_RIGHT));
-        inputManager.addMapping("CamLeft", new KeyTrigger(KeyInput.KEY_LEFT));
+        inputManager.addMapping(CAM_RIGHT, new KeyTrigger(KeyInput.KEY_RIGHT));
+        inputManager.addMapping(CAM_LEFT, new KeyTrigger(KeyInput.KEY_LEFT));
 
-        inputManager.addMapping("Clear", new KeyTrigger(KeyInput.KEY_DELETE));
+        inputManager.addMapping(CLEAR, new KeyTrigger(KeyInput.KEY_DELETE));
 
         // Add the names to the action listener.
         inputManager.addListener(actionListener,
-                "IncreaseAngle", "DecreaseAngle",
-                "Fire",
-                "IncreaseGravity", "DecreaseGravity",
-                "IncreaseSpeed", "DecreaseSpeed",
+                INCREASE_ANGLE, DECREASE_ANGLE,
+                FIRE,
+                INCREASE_GRAVITY, DECREASE_GRAVITY,
+                INCREASE_SPEED, DECREASE_SPEED,
 
-                "Clear");
+                CLEAR);
         inputManager.addListener(analogListener,
-                "ZoomIN", "ZoomOUT",
-                "CamLeft", "CamRight");
+                ZOOM_IN, ZOOM_OUT,
+                CAM_LEFT, CAM_RIGHT);
     }
 
     private final AnalogListener analogListener = (name, value, tpf) -> {
-        if (name.equals("ZoomIN")) {
-            zoom(1.f - 4f * value);
-        } else if (name.equals("ZoomOUT")) {
-            zoom(1.f + 4f * value);
-        } else if (name.equals("CamRight")) {
-            horizontalCamMove(10.f * cameraSize * value);
-        } else if (name.equals("CamLeft")) {
-            horizontalCamMove(-10.f * cameraSize * value);
+        switch (name) {
+            case ZOOM_IN:
+                zoom(1.f - 4f * value);
+                break;
+            case ZOOM_OUT:
+                zoom(1.f + 4f * value);
+                break;
+            case CAM_RIGHT:
+                horizontalCamMove(10.f * cameraSize * value);
+                break;
+            case CAM_LEFT:
+                horizontalCamMove(-10.f * cameraSize * value);
+                break;
+            default:
+                break;
         }
     };
 
     private final ActionListener actionListener = (name, keyPressed, tpf) -> {
-        if (name.equals("IncreaseGravity") && !keyPressed) {
-            changeParamByDelta("Gravity", 1.f);
-        } else if (name.equals("DecreaseGravity") && !keyPressed) {
-            changeParamByDelta("Gravity", -1.f);
-        } else if (name.equals("IncreaseAngle") && !keyPressed) {
-            changeParamByDelta("StartAngle", 5.f);
-        } else if (name.equals("DecreaseAngle") && !keyPressed) {
-            changeParamByDelta("StartAngle", -5.f);
-        } else if (name.equals("IncreaseSpeed") && !keyPressed) {
-            changeParamByDelta("StartSpeed", 1f);
-        } else if (name.equals("DecreaseSpeed") && !keyPressed) {
-            changeParamByDelta("StartSpeed", -1f);
-        } else if (name.equals("Fire") && !keyPressed) {
-            fire();
-        } else if (name.equals("Clear") && !keyPressed) {
-            clearTrajectoryTraces();
+        if (!keyPressed) {
+            switch (name) {
+                case INCREASE_GRAVITY:
+                    changeParamByDelta(GRAVITY, 1.f);
+                    break;
+                case DECREASE_GRAVITY:
+                    changeParamByDelta(GRAVITY, -1.f);
+                    break;
+                case INCREASE_ANGLE:
+                    changeParamByDelta(START_ANGLE, 5.f);
+                    break;
+                case DECREASE_ANGLE:
+                    changeParamByDelta(START_ANGLE, -5.f);
+                    break;
+                case INCREASE_SPEED:
+                    changeParamByDelta(START_SPEED, 1f);
+                    break;
+                case DECREASE_SPEED:
+                    changeParamByDelta(START_SPEED, -1f);
+                    break;
+                case FIRE:
+                    fire();
+                    break;
+                case CLEAR:
+                    clearTrajectoryTraces();
+                    break;
+                default:
+                    break;
+            }
         }
     };
 
@@ -139,7 +168,7 @@ public class Application extends SimpleApplication {
     }
 
     @Override
-    public void simpleUpdate(float tpf) {
+    public void simpleUpdate(float tpf) { // default implementation ignored
     }
 
     private AppSettings getBuildSettings() {
@@ -160,16 +189,8 @@ public class Application extends SimpleApplication {
         return new Floor(rootNode);
     }
 
-    private void initMaterials() {
-        matRed = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        matRed.setColor("Color", ColorRGBA.Red);
-        matBlue = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        matBlue.setColor("Color", ColorRGBA.Blue);
-    }
-
     private void fire() {
         if (pr != null) {
-            WeakReference<Projectile> wr = new WeakReference<>(pr);
             pr.destroy();
             pr = null;
         }

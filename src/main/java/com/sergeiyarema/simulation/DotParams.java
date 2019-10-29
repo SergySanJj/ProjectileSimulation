@@ -6,6 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DotParams implements Copiable<DotParams> {
+    public static final String GRAVITY = "Gravity";
+    public static final String START_ANGLE = "StartAngle";
+    public static final String START_SPEED = "StartSpeed";
+
     private Map<String, ChangeableByDelta> mapping = new HashMap<>();
     private Vector3f startPos;
 
@@ -14,14 +18,14 @@ public class DotParams implements Copiable<DotParams> {
 
     public DotParams(Vector3f startPos, float startAngle, float startSpeed, float gravity) {
         this.startPos = new Vector3f(startPos);
-        set("StartAngle", startAngle);
-        set("StartSpeed", startSpeed);
-        set("Gravity", gravity);
+        set(START_ANGLE, startAngle);
+        set(START_SPEED, startSpeed);
+        set(GRAVITY, gravity);
     }
 
     @Override
     public DotParams copy() {
-        return new DotParams(startPos, get("StartAngle"), get("StartSpeed"), get("Gravity"));
+        return new DotParams(startPos, get(START_ANGLE), get(START_SPEED), get(GRAVITY));
     }
 
     public Vector3f getStartPos() {

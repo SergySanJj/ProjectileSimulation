@@ -5,6 +5,9 @@ import com.jme3.asset.AssetManager;
 public class GlobalAssets {
     private static AssetManager assetManager;
 
+    private GlobalAssets() {
+    }
+
     public static void innitManager(AssetManager assetManager) {
         GlobalAssets.assetManager = assetManager;
     }

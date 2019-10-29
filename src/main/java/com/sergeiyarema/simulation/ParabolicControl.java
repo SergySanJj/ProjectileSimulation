@@ -54,7 +54,7 @@ public class ParabolicControl extends AbstractControl {
     }
 
     @Override
-    protected void controlRender(RenderManager rm, ViewPort vp) {
+    protected void controlRender(RenderManager rm, ViewPort vp) { // default implementation ignored
     }
 
     public void setParams(DotParams params) {
