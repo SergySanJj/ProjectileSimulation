@@ -1,14 +1,12 @@
 package com.sergeiyarema.simulation;
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.asset.AssetManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
@@ -26,7 +24,7 @@ public class Application extends SimpleApplication {
     private Floor fl;
 
     private DotParams currentParams =
-            new DotParams(new Vector2f(-14.f, -2.5f), 45.f, 20f, 9.80665f);
+            new DotParams(new Vector3f(-14.f, -2.5f, 0.f), 45.f, 20f, 9.80665f);
 
     private float cameraSize = 14f;
 
@@ -59,12 +57,12 @@ public class Application extends SimpleApplication {
                 cameraSize, -cameraSize);
     }
 
-    public void zoom(float scale) {
+    private void zoom(float scale) {
         cameraSize = cameraSize * scale;
         updateCameraFrustum();
     }
 
-    public void horizontalCamMove(float delta) {
+    private void horizontalCamMove(float delta) {
         Vector3f currLocation = cam.getLocation();
         currLocation.x += delta;
         cam.setLocation(currLocation);
@@ -104,42 +102,35 @@ public class Application extends SimpleApplication {
                 "CamLeft", "CamRight");
     }
 
-    private final AnalogListener analogListener = new AnalogListener() {
-
-        @Override
-        public void onAnalog(String name, float value, float tpf) {
-            if (name.equals("ZoomIN")) {
-                zoom(1.f - 4f * value);
-            } else if (name.equals("ZoomOUT")) {
-                zoom(1.f + 4f * value);
-            } else if (name.equals("CamRight")) {
-                horizontalCamMove(10.f * cameraSize * value);
-            } else if (name.equals("CamLeft")) {
-                horizontalCamMove(-10.f * cameraSize * value);
-            }
+    private final AnalogListener analogListener = (name, value, tpf) -> {
+        if (name.equals("ZoomIN")) {
+            zoom(1.f - 4f * value);
+        } else if (name.equals("ZoomOUT")) {
+            zoom(1.f + 4f * value);
+        } else if (name.equals("CamRight")) {
+            horizontalCamMove(10.f * cameraSize * value);
+        } else if (name.equals("CamLeft")) {
+            horizontalCamMove(-10.f * cameraSize * value);
         }
     };
 
-    private final ActionListener actionListener = new ActionListener() {
-        @Override
-        public void onAction(String name, boolean keyPressed, float tpf) {
-            if (name.equals("IncreaseGravity") && !keyPressed) {
-                changeParamByDelta("Gravity", 1.f);
-            } else if (name.equals("DecreaseGravity") && !keyPressed) {
-                changeParamByDelta("Gravity", -1.f);
-            } else if (name.equals("IncreaseAngle") && !keyPressed) {
-                changeParamByDelta("StartAngle", 5.f);
-            } else if (name.equals("DecreaseAngle") && !keyPressed) {
-                changeParamByDelta("StartAngle", -5.f);
-            } else if (name.equals("IncreaseSpeed") && !keyPressed) {
-                changeParamByDelta("StartSpeed", 1f);
-            } else if (name.equals("DecreaseSpeed") && !keyPressed) {
-                changeParamByDelta("StartSpeed", -1f);
-            } else if (name.equals("Fire") && !keyPressed) {
-                fire();
-            } else if (name.equals("Clear") && !keyPressed) {
-                clearTrajectoryTraces();
-            }
+    private final ActionListener actionListener = (name, keyPressed, tpf) -> {
+        if (name.equals("IncreaseGravity") && !keyPressed) {
+            changeParamByDelta("Gravity", 1.f);
+        } else if (name.equals("DecreaseGravity") && !keyPressed) {
+            changeParamByDelta("Gravity", -1.f);
+        } else if (name.equals("IncreaseAngle") && !keyPressed) {
+            changeParamByDelta("StartAngle", 5.f);
+        } else if (name.equals("DecreaseAngle") && !keyPressed) {
+            changeParamByDelta("StartAngle", -5.f);
+        } else if (name.equals("IncreaseSpeed") && !keyPressed) {
+            changeParamByDelta("StartSpeed", 1f);
+        } else if (name.equals("DecreaseSpeed") && !keyPressed) {
+            changeParamByDelta("StartSpeed", -1f);
+        } else if (name.equals("Fire") && !keyPressed) {
+            fire();
+        } else if (name.equals("Clear") && !keyPressed) {
+            clearTrajectoryTraces();
         }
     };
 

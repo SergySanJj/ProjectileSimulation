@@ -24,7 +24,6 @@ gradle-app.setting
 /.nb-gradle/
 /.idea/
 /dist/
-/build/
 /bin/
 /netbeans/
 /.classpath
@@ -37,7 +36,6 @@ gradle-app.setting
 *.iml
 *.class
 *.jtxt
-.gradletasknamecache
 .DS_Store
 /jme3-core/src/main/resources/com/jme3/system/version.properties
 /jme3-*/build/

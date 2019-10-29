@@ -2,7 +2,6 @@ package com.sergeiyarema.simulation;
 
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -10,10 +9,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.control.AbstractControl;
 import com.jme3.scene.shape.Sphere;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class ParabollicControl extends AbstractControl {
+public class ParabolicControl extends AbstractControl {
     private DotParams params;
     private float totalTime;
     private static final float FLOOR_LEVEL = -2.5f;
@@ -22,7 +18,7 @@ public class ParabollicControl extends AbstractControl {
     private final Object mutex = new Object();
     private Integer lastSpawnedX;
 
-    ParabollicControl() {
+    ParabolicControl() {
         super();
         totalTime = 0.f;
         lastSpawnedX = 0;
@@ -31,9 +27,9 @@ public class ParabollicControl extends AbstractControl {
     @Override
     protected void controlUpdate(float tpf) {
         totalTime += tpf * 2.f;
-        Vector2f newCoords = Trajectory.getCoords(params, totalTime);
+        Vector3f newCoords = Trajectory.getCoords(params, totalTime);
         if (spatial.getLocalTranslation().y > FLOOR_LEVEL) {
-            spatial.setLocalTranslation(newCoords.x, newCoords.y, 0.f);
+            spatial.setLocalTranslation(newCoords);
             synchronized (mutex) {
                 if ((int) (spatial.getLocalTranslation().x / INTERVAL) != lastSpawnedX) {
                     spawnTrajectoryPoint();
