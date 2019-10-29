@@ -1,16 +1,20 @@
 package com.sergeiyarema.simulation;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.asset.AssetManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
 
 
 public class Application extends SimpleApplication {
@@ -22,9 +26,9 @@ public class Application extends SimpleApplication {
     private Floor fl;
 
     private DotParams currentParams =
-            new DotParams(new Vector2f(0.f, 0.f), 45.f, 0.05f, 9.80665f);
+            new DotParams(new Vector2f(-14.f, -2.5f), 45.f, 20f, 9.80665f);
 
-    private float cameraSize = 12f;
+    private float cameraSize = 14f;
 
     public Application() {
         super(null);
@@ -38,8 +42,8 @@ public class Application extends SimpleApplication {
         viewPort.setBackgroundColor(ColorRGBA.White);
         inputManager.setCursorVisible(true);
         initMaterials();
-        horizontalCamMove(13.f);
-
+        horizontalCamMove(0.f);
+        GlobalAssets.innitManager(this.assetManager);
         fl = createFloor();
     }
 
@@ -76,8 +80,8 @@ public class Application extends SimpleApplication {
 
         inputManager.addMapping("Fire", new KeyTrigger(KeyInput.KEY_F));
 
-        inputManager.addMapping("IncreaseGravity", new KeyTrigger(KeyInput.KEY_U));
-        inputManager.addMapping("DecreaseGravity", new KeyTrigger(KeyInput.KEY_I));
+        inputManager.addMapping("IncreaseGravity", new KeyTrigger(KeyInput.KEY_I));
+        inputManager.addMapping("DecreaseGravity", new KeyTrigger(KeyInput.KEY_U));
 
         inputManager.addMapping("IncreaseSpeed", new KeyTrigger(KeyInput.KEY_X));
         inputManager.addMapping("DecreaseSpeed", new KeyTrigger(KeyInput.KEY_Z));
@@ -85,28 +89,41 @@ public class Application extends SimpleApplication {
         inputManager.addMapping("CamRight", new KeyTrigger(KeyInput.KEY_RIGHT));
         inputManager.addMapping("CamLeft", new KeyTrigger(KeyInput.KEY_LEFT));
 
+        inputManager.addMapping("Clear", new KeyTrigger(KeyInput.KEY_DELETE));
+
         // Add the names to the action listener.
         inputManager.addListener(actionListener,
-                "ZoomIN", "ZoomOUT",
                 "IncreaseAngle", "DecreaseAngle",
                 "Fire",
                 "IncreaseGravity", "DecreaseGravity",
                 "IncreaseSpeed", "DecreaseSpeed",
+
+                "Clear");
+        inputManager.addListener(analogListener,
+                "ZoomIN", "ZoomOUT",
                 "CamLeft", "CamRight");
     }
+
+    private final AnalogListener analogListener = new AnalogListener() {
+
+        @Override
+        public void onAnalog(String name, float value, float tpf) {
+            if (name.equals("ZoomIN")) {
+                zoom(1.f - 4f * value);
+            } else if (name.equals("ZoomOUT")) {
+                zoom(1.f + 4f * value);
+            } else if (name.equals("CamRight")) {
+                horizontalCamMove(10.f * cameraSize * value);
+            } else if (name.equals("CamLeft")) {
+                horizontalCamMove(-10.f * cameraSize * value);
+            }
+        }
+    };
 
     private final ActionListener actionListener = new ActionListener() {
         @Override
         public void onAction(String name, boolean keyPressed, float tpf) {
-            if (name.equals("ZoomIN") && !keyPressed) {
-                zoom(0.9f);
-            } else if (name.equals("ZoomOUT") && !keyPressed) {
-                zoom(1.1f);
-            } else if (name.equals("CamRight") && !keyPressed) {
-                horizontalCamMove(1.f);
-            } else if (name.equals("CamLeft") && !keyPressed) {
-                horizontalCamMove(-1.f);
-            } else if (name.equals("IncreaseGravity") && !keyPressed) {
+            if (name.equals("IncreaseGravity") && !keyPressed) {
                 changeParamByDelta("Gravity", 1.f);
             } else if (name.equals("DecreaseGravity") && !keyPressed) {
                 changeParamByDelta("Gravity", -1.f);
@@ -115,11 +132,13 @@ public class Application extends SimpleApplication {
             } else if (name.equals("DecreaseAngle") && !keyPressed) {
                 changeParamByDelta("StartAngle", -5.f);
             } else if (name.equals("IncreaseSpeed") && !keyPressed) {
-                changeParamByDelta("StartSpeed", 0.01f);
+                changeParamByDelta("StartSpeed", 1f);
             } else if (name.equals("DecreaseSpeed") && !keyPressed) {
-                changeParamByDelta("StartSpeed", -0.01f);
+                changeParamByDelta("StartSpeed", -1f);
             } else if (name.equals("Fire") && !keyPressed) {
                 fire();
+            } else if (name.equals("Clear") && !keyPressed) {
+                clearTrajectoryTraces();
             }
         }
     };
@@ -143,11 +162,11 @@ public class Application extends SimpleApplication {
     }
 
     private Projectile createProjectile() {
-        return new Projectile(currentParams, rootNode, assetManager);
+        return new Projectile(currentParams.copy(), rootNode);
     }
 
     private Floor createFloor() {
-        return new Floor(rootNode, assetManager);
+        return new Floor(rootNode);
     }
 
     private void initMaterials() {
@@ -164,6 +183,14 @@ public class Application extends SimpleApplication {
             pr = null;
         }
         pr = createProjectile();
-        System.out.println("fire");
+    }
+
+    private void clearTrajectoryTraces() {
+        List<Spatial> children = rootNode.getChildren();
+        for (Spatial el : children) {
+            if (el.getName().equals("TrPoint")) {
+                el.removeFromParent();
+            }
+        }
     }
 }

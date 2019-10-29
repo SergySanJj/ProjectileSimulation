@@ -17,12 +17,12 @@ public class Projectile {
     private Projectile() {
     }
 
-    public Projectile(DotParams dotParams, Node rootNode, AssetManager assetManager) {
-        Material matBlue = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+    public Projectile(DotParams dotParams, Node rootNode) {
+        Material matBlue = new Material(GlobalAssets.manager(), "Common/MatDefs/Misc/Unshaded.j3md");
         matBlue.setColor("Color", ColorRGBA.Blue);
         geometry =
                 new Geometry("Projectile",
-                        new Sphere(32, 32, 0.4f, true, false));
+                        new Sphere(32, 32, 0.5f, true, false));
         geometry.setMaterial(matBlue);
         this.dotParams = dotParams;
         totalTime = 0.f;

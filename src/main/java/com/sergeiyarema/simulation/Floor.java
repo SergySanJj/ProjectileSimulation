@@ -15,16 +15,15 @@ public class Floor {
 
     private Geometry geometry;
 
-    Floor(Node rootNode, AssetManager assetManager) {
-        Material matRed = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+    Floor(Node rootNode) {
+        Material matRed = new Material(GlobalAssets.manager(), "Common/MatDefs/Misc/Unshaded.j3md");
         matRed.setColor("Color", ColorRGBA.Red);
 
-        geometry = new Geometry("Box",new Box(WIDTH, HEIGHT, 1.f));
+        geometry = new Geometry("Box", new Box(WIDTH, HEIGHT, 1.f));
         geometry.move(new Vector3f(0.f, -5.f, 0.f));
         rootNode.attachChild(geometry);
 
         geometry.setMaterial(matRed);
-
     }
 
 }

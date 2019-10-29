@@ -9,12 +9,11 @@ public class DotParams implements Copiable<DotParams> {
     private Map<String, ChangeableByDelta> mapping = new HashMap<>();
     private Vector2f startPos;
 
-
     private DotParams() {
     }
 
     public DotParams(Vector2f startPos, float startAngle, float startSpeed, float gravity) {
-        this.startPos = startPos;
+        this.startPos = new Vector2f(startPos);
         set("StartAngle", startAngle);
         set("StartSpeed", startSpeed);
         set("Gravity", gravity);
