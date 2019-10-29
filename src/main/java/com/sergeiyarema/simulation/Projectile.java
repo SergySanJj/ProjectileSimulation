@@ -7,8 +7,11 @@ import com.jme3.scene.Node;
 import com.jme3.scene.shape.Sphere;
 
 public class Projectile {
+    private static final float RADIUS = 0.5f;
+
     private DotParams dotParams;
     private Geometry geometry;
+    private ParabolicControl control;
 
     private Projectile() {
     }
@@ -18,12 +21,17 @@ public class Projectile {
         matBlue.setColor("Color", ColorRGBA.Blue);
         geometry =
                 new Geometry("Projectile",
-                        new Sphere(32, 32, 0.5f, true, false));
+                        new Sphere(32, 32, RADIUS, true, false));
         geometry.setMaterial(matBlue);
         this.dotParams = dotParams;
         rootNode.attachChild(geometry);
-        ParabolicControl control = new ParabolicControl();
-        control.setParams(this.dotParams);
+    }
+
+    public void fire(DotParams dotParams) {
+        if (control != null)
+            geometry.removeControl(control);
+        this.dotParams = dotParams.copy();
+        control = new ParabolicControl(this.dotParams);
         geometry.addControl(control);
     }
 
@@ -31,9 +39,7 @@ public class Projectile {
         return dotParams;
     }
 
-    public void destroy(){
+    public void destroy() {
         geometry.removeFromParent();
     }
-
-
 }

@@ -8,7 +8,7 @@ public class GlobalAssets {
     private GlobalAssets() {
     }
 
-    public static void innitManager(AssetManager assetManager) {
+    public static void innitAssets(AssetManager assetManager) {
         GlobalAssets.assetManager = assetManager;
     }
 

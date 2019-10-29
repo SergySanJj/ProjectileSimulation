@@ -1,7 +1,6 @@
 package com.sergeiyarema.simulation;
 
 import com.jme3.math.Vector3f;
-
 import static com.sergeiyarema.simulation.DotParams.*;
 
 public class Trajectory {
