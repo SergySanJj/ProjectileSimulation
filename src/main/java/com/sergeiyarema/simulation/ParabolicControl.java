@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ParabolicControl extends AbstractControl {
-    private static final int keepTrails = 5;
+    private static final int MAX_TRAILS = 5;
     private static List<List<Spatial>> trailsList = new ArrayList<>();
 
     private List<Spatial> currentTrail;
@@ -82,7 +82,7 @@ public class ParabolicControl extends AbstractControl {
 
     private static List<Spatial> createNewTrail() {
         List<Spatial> currentTrail = new ArrayList<>();
-        if (trailsList.size() > keepTrails) {
+        if (trailsList.size() > MAX_TRAILS) {
             for (Spatial el : trailsList.get(0)) {
                 el.removeFromParent();
             }

@@ -5,7 +5,7 @@ import com.jme3.math.Vector3f;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DotParams implements Copiable<DotParams> {
+public class DotParams implements Copiable<DotParams>, Comparable<DotParams> {
     public static final String GRAVITY = "Gravity";
     public static final String START_ANGLE = "StartAngle";
     public static final String START_SPEED = "StartSpeed";
@@ -17,7 +17,7 @@ public class DotParams implements Copiable<DotParams> {
     }
 
     public DotParams(Vector3f startPos, float startAngle, float startSpeed, float gravity) {
-        this.startPos = new Vector3f(startPos);
+        this.startPos = startPos.clone();
         set(START_ANGLE, startAngle);
         set(START_SPEED, startSpeed);
         set(GRAVITY, gravity);
@@ -33,7 +33,7 @@ public class DotParams implements Copiable<DotParams> {
     }
 
     public void setStartPos(Vector3f startPos) {
-        this.startPos = new Vector3f(startPos);
+        this.startPos = startPos.clone();
     }
 
     public float get(String valueName) {
@@ -48,5 +48,21 @@ public class DotParams implements Copiable<DotParams> {
         ChangeableByDelta newChangeable = new ChangeableByDelta();
         newChangeable.setValue(newValue);
         mapping.put(valueName, newChangeable);
+    }
+
+    @Override
+    public int compareTo(DotParams dotParams) {
+        if (this.hashCode() == dotParams.hashCode())
+            return 0;
+
+        boolean mappingCheck = true;
+        for (Map.Entry<String, ChangeableByDelta> entry : mapping.entrySet()) {
+            if (dotParams.get(entry.getKey()) - entry.getValue().getValue() > 0.001) {
+                mappingCheck = false;
+                break;
+            }
+        }
+        if (startPos.equals(dotParams.getStartPos()) && mappingCheck) return 0;
+        else return -1;
     }
 }

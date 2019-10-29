@@ -8,8 +8,8 @@ public class Trajectory {
     }
 
     public static Vector3f getCoords(DotParams params, float currentTime) {
-        float y0 = params.getStartPos().y;
         float x0 = params.getStartPos().x;
+        float y0 = params.getStartPos().y;
         float z0 = params.getStartPos().z;
         float alpha = (float) Math.toRadians(params.get(START_ANGLE));
         float vx = (float) (params.get(START_SPEED) * Math.cos(alpha));
@@ -20,8 +20,8 @@ public class Trajectory {
     }
 
     public static Vector3f getCoordsFromXValue(DotParams params, float x) {
-        float y0 = params.getStartPos().y;
         float x0 = params.getStartPos().x;
+        float y0 = params.getStartPos().y;
         float z0 = params.getStartPos().z;
         x = x - x0;
         float alpha = (float) Math.toRadians(params.get(START_ANGLE));
