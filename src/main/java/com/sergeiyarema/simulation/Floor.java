@@ -18,10 +18,9 @@ public class Floor {
         matRed.setColor("Color", ColorRGBA.Red);
 
         geometry = new Geometry("Box", new Box(WIDTH, HEIGHT, 1.f));
+        geometry.setMaterial(matRed);
         geometry.move(new Vector3f(0.f, topCoordinate - HEIGHT, 0.f));
         rootNode.attachChild(geometry);
-
-        geometry.setMaterial(matRed);
     }
 
     public float getTopCoordinate() {

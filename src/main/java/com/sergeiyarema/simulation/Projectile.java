@@ -25,7 +25,7 @@ public class Projectile {
                 new Geometry("Projectile",
                         new Sphere(32, 32, dotParams.get(RADIUS), true, false));
         geometry.setMaterial(matBlue);
-        this.dotParams = dotParams;
+        this.dotParams = dotParams.copy();
         rootNode.attachChild(geometry);
     }
 

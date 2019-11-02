@@ -40,6 +40,7 @@ public class ApplicationControls {
 
     private float cameraSize = 14f;
     private Projectile pr;
+    private Cannon cannon;
 
     private DotParams currentParams =
             new DotParams(new Vector3f(-14.f, GROUND + 0.5f, 0.f), 45.f, 20f, GROUND, 9.80665f);
@@ -57,6 +58,7 @@ public class ApplicationControls {
         initKeys();
 
         Floor fl = new Floor(rootNode, GROUND);
+        cannon = new Cannon(currentParams, rootNode);
     }
 
     private void initCameraSettings() {
@@ -166,10 +168,10 @@ public class ApplicationControls {
                     changeParamByDelta(GRAVITY, -1.f);
                     break;
                 case INCREASE_ANGLE:
-                    changeParamByDelta(START_ANGLE, 5.f);
+                    changeAngle(5.f);
                     break;
                 case DECREASE_ANGLE:
-                    changeParamByDelta(START_ANGLE, -5.f);
+                    changeAngle(-5.f);
                     break;
                 case INCREASE_SPEED:
                     changeParamByDelta(START_SPEED, 1f);
@@ -191,6 +193,11 @@ public class ApplicationControls {
 
     private void changeParamByDelta(String paramName, float delta) {
         this.currentParams.getChangeable(paramName).changeBy(delta);
+    }
+
+    private void changeAngle(float delta) {
+        cannon.setAngle(currentParams.get(START_ANGLE) + delta);
+        changeParamByDelta(START_ANGLE, delta);
     }
 
     private Projectile createProjectile() {
