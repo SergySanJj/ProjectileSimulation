@@ -26,29 +26,25 @@ public class Cannon {
         geometry =
                 new Geometry("Canon",
                         new Cylinder(32, 32,
-                                params.get(RADIUS) * 1.1f, params.get(RADIUS) * 3f, true));
+                                params.get(RADIUS) * 1.1f, params.get(RADIUS) * 6f, true));
 
         geometry.setMaterial(matGray);
         geometry.move(params.getStartPos());
-        rotCylinder();
-        //geometry.scale(1f, 0.5f, 1.f);
         setAngle(params.get(START_ANGLE));
-        rootNode.attachChild(geometry);
-    }
 
-    private void rotCylinder(){
-        Quaternion pitch90 = new Quaternion();
-        pitch90.fromAngleAxis(FastMath.PI/2, new Vector3f(1, 0, 0));
-        geometry.setLocalRotation(pitch90);
-        // todo here
+        rootNode.attachChild(geometry);
     }
 
     public void setAngle(float angle) {
         dotParams.set(START_ANGLE, angle);
+
+        Quaternion cameraAlign = new Quaternion();
+        cameraAlign.fromAngleAxis(FastMath.PI / 2.f, new Vector3f(0, 1, 0));
+
         float radAngle = (float) Math.toRadians(angle);
-        System.out.println(angle);
-        Quaternion pitch90 = new Quaternion();
-        pitch90.fromAngleAxis(radAngle, new Vector3f(0, 0, 1));
-        geometry.setLocalRotation(pitch90);
+        Quaternion angleSetter = new Quaternion();
+        angleSetter.fromAngleAxis(radAngle, new Vector3f(0, 0, 1));
+
+        geometry.setLocalRotation(angleSetter.mult(cameraAlign));
     }
 }
