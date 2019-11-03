@@ -1,23 +1,76 @@
 package com.sergeiyarema.simulation;
 
-import com.jme3.system.AppSettings;
+import com.jme3.scene.Node;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static com.sergeiyarema.simulation.Application.WINDOW_HEIGHT;
-import static com.sergeiyarema.simulation.Application.WINDOW_WIDTH;
-import static org.junit.Assert.*;
+import java.lang.annotation.*;
+import java.lang.reflect.Method;
+import java.util.logging.Level;
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+        //can use in method only.
+@interface BeforeAppStart {
+    public boolean enabled() default true;
+}
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+        //can use in method only.
+@interface AfterAppStart {
+    public boolean enabled() default true;
+}
 
 public class ApplicationTest {
-    Application app = new Application();
+    private Application app = new Application();
 
     @Test
-    public void simpleInitApp() {
-        app.start();
+    public void testChain() {
+        java.util.logging.Logger.getLogger("").setLevel(Level.WARNING);
+
+        processAnnotated(BeforeAppStart.class);
+        Thread appThread = new Thread(() -> app.start());
+        appThread.start();
+        while (!app.isReady()) ;
+        processAnnotated(AfterAppStart.class);
+
+        appThread.interrupt();
     }
 
-    @Test
-    public void simpleUpdate() {
-        app.simpleUpdate(1.f);
+    private void processAnnotated(Class classRef) {
+        int testsRun = 0;
+        for (Method method : ApplicationTest.class.getDeclaredMethods()) {
+            if (method.isAnnotationPresent(classRef)) {
+                try {
+                    method.invoke(this);
+                } catch (Exception e) {
+                    System.out.println("Assert in " + method.getClass().getName() + "." + method.getName() + "()");
+                    e.printStackTrace();
+                    Assert.assertNotNull(null);
+                }
+                testsRun++;
+            }
+        }
+        System.out.println("Tests count " + testsRun);
+    }
+
+    // BEFORE
+    @BeforeAppStart
+    private void globalAssetsTestPre() {
+        Assert.assertNull(GlobalAssets.manager());
+    }
+
+    // AFTER
+    @AfterAppStart
+    private void globalAssetsTestAfter() {
+        Assert.assertNotNull(GlobalAssets.manager());
+    }
+
+    @AfterAppStart
+    private void floorTestAfter() {
+        Node node = new Node();
+        Floor floor1 = new Floor(node, 0f);
+        Assert.assertEquals(0f, floor1.getTopCoordinate(), 0.001f);
     }
 }

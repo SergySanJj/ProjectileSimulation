@@ -2,13 +2,13 @@ package com.sergeiyarema.simulation;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Vector3f;
 import com.jme3.system.AppSettings;
+
 
 public class Application extends SimpleApplication {
     public static final int WINDOW_HEIGHT = 800;
     public static final int WINDOW_WIDTH = 1000;
-
+    private boolean isReady = false;
 
     public Application() {
         super();
@@ -18,11 +18,13 @@ public class Application extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
+
         GlobalAssets.innitAssets(this.assetManager);
         flyCam.setEnabled(false);
         ApplicationControls applicationControls = new ApplicationControls(inputManager, cam, rootNode);
         viewPort.setBackgroundColor(ColorRGBA.White);
 
+        isReady = true;
     }
 
     @Override
@@ -41,5 +43,9 @@ public class Application extends SimpleApplication {
 
     public AppSettings getSettings() {
         return getSettings();
+    }
+
+    public boolean isReady() {
+        return isReady;
     }
 }

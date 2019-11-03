@@ -16,7 +16,7 @@ import java.util.List;
 import static com.sergeiyarema.simulation.DotParams.*;
 
 public class ParabolicControl extends AbstractControl {
-    private static final int MAX_TRAILS = 5;
+    public static final int MAX_TRAILS = 5;
     private static List<List<Spatial>> trailsList = new ArrayList<>();
 
     private List<Spatial> currentTrail;
@@ -95,5 +95,9 @@ public class ParabolicControl extends AbstractControl {
         }
         trailsList.add(currentTrail);
         return currentTrail;
+    }
+
+    private static int trailsCount() {
+        return trailsList.size();
     }
 }

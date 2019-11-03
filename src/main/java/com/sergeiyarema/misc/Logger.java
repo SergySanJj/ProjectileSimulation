@@ -1,5 +1,7 @@
 package com.sergeiyarema.misc;
 
+import java.util.logging.Level;
+
 public class Logger {
     public enum MODE {INFO, DEBUG, WARNING, ERROR, ALWAYS}
 
@@ -11,7 +13,7 @@ public class Logger {
     public static boolean log(String message, MODE mode) {
         if (mode.compareTo(currentMode) >= 0)
             return true;
-        System.out.println("    " + message);
+        java.util.logging.Logger.getLogger("").log(Level.ALL,"    " + message);
         return false;
     }
 
