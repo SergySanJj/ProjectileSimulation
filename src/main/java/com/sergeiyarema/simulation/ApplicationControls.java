@@ -99,9 +99,17 @@ public class ApplicationControls {
         this.currentParams.getChangeable(paramName).changeBy(delta);
     }
 
+    public void setParam(String paramName, float val) {
+        this.currentParams.getChangeable(paramName).setValue(val);
+    }
+
+    public void setAngle(float angle) {
+        ((Cannon) getObject("Cannon")).setAngle(angle);
+        setParam(START_ANGLE, angle);
+    }
+
     public void changeAngle(float delta) {
-        ((Cannon) getObject("Cannon")).setAngle(currentParams.get(START_ANGLE) + delta);
-        changeParamByDelta(START_ANGLE, delta);
+        setAngle(currentParams.get(START_ANGLE) + delta);
     }
 
     public void fire() {
@@ -130,11 +138,11 @@ public class ApplicationControls {
         return inputManager;
     }
 
-    public ChangeableByDelta getCameraSize(){
+    public ChangeableByDelta getCameraSize() {
         return cameraSize;
     }
 
-    public Vector3f getCameraCoordinates(){
+    public Vector3f getCameraCoordinates() {
         return cam.getLocation().clone();
     }
 }

@@ -33,6 +33,6 @@ public abstract class SimulationObject {
     }
 
     public DotParams getParams() {
-        return params;
+        return params.copy();
     }
 }

@@ -14,9 +14,9 @@ public class DotParams implements Copiable<DotParams>, Comparable<DotParams> {
     public static final String GROUND_LEVEL = "GroundLevel";
     public static final String RADIUS = "Radius";
 
-    private static final Vector2f ANGLE_LIMIT = new Vector2f(10f, 170f);
-    private static final Vector2f SPEED_LIMIT = new Vector2f(0f, 200f);
-    private static final Vector2f GRAVITY_LIMIT = new Vector2f(0.1f, 100f);
+    public static final Vector2f ANGLE_LIMIT = new Vector2f(10f, 170f);
+    public static final Vector2f SPEED_LIMIT = new Vector2f(0f, 200f);
+    public static final Vector2f GRAVITY_LIMIT = new Vector2f(0.1f, 100f);
 
     private Map<String, ChangeableByDelta> mapping = new HashMap<>();
     private Vector3f startPos;
@@ -56,9 +56,12 @@ public class DotParams implements Copiable<DotParams>, Comparable<DotParams> {
 
 
     public ChangeableByDelta set(String valueName, float newValue) {
-        ChangeableByDelta newChangeable = new ChangeableByDelta();
+        ChangeableByDelta newChangeable = mapping.get(valueName);
+        if (newChangeable == null) {
+            newChangeable = new ChangeableByDelta();
+            mapping.put(valueName, newChangeable);
+        }
         newChangeable.setValue(newValue);
-        mapping.put(valueName, newChangeable);
         return newChangeable;
     }
 

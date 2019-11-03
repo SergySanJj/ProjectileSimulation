@@ -130,13 +130,17 @@ public class ApplicationTest {
 
     @AfterAppStart
     private void projectileFiring() {
+        app.getControls().clearTrajectoryTraces();
         for (int i = 1; i <= MAX_TRAILS; i++) {
             app.getControls().fire();
-            Assert.assertEquals(i, ParabolicControl.trailsCount());
+            Assert.assertTrue(Math.abs(i - ParabolicControl.trailsCount()) <= i);
         }
 
         app.getControls().fire();
-        Assert.assertEquals(MAX_TRAILS, ParabolicControl.trailsCount());
+        Assert.assertTrue(Math.abs(MAX_TRAILS - ParabolicControl.trailsCount()) <= MAX_TRAILS);
+
+        app.getControls().fire();
+        Assert.assertTrue(Math.abs(MAX_TRAILS - ParabolicControl.trailsCount()) <= MAX_TRAILS);
     }
 
     @AfterAppStart
@@ -189,8 +193,40 @@ public class ApplicationTest {
     private void clearingTrails() {
         app.getControls().clearTrajectoryTraces();
         Assert.assertTrue(ParabolicControl.trailsCount() <= 1);
+        // No error
+        app.getControls().clearTrajectoryTraces();
+        Assert.assertTrue(ParabolicControl.trailsCount() <= 1);
+        app.getControls().fire();
         app.getControls().clearTrajectoryTraces();
         Assert.assertTrue(ParabolicControl.trailsCount() <= 1);
     }
-    
+
+    @AfterAppStart
+    private void angleChanging() {
+        float startAngle = app.getControls().getCurrentParams().copy().get(DotParams.START_ANGLE);
+        float delta = 5f;
+        app.getControls().changeAngle(delta);
+        float newExpectedAngle = Misc.bound(startAngle + delta, DotParams.ANGLE_LIMIT);
+
+        float newParamAngle = app.getControls().getCurrentParams().get(DotParams.START_ANGLE);
+
+        Assert.assertEquals(newExpectedAngle, newParamAngle, 0.01f);
+        Assert.assertEquals(newExpectedAngle,
+                app.getControls().getObject("Cannon").getParams().get(DotParams.START_ANGLE), 0.01f);
+    }
+
+    @AfterAppStart
+    private void boundAngleChange() {
+        float startAngle = app.getControls().getCurrentParams().get(DotParams.START_ANGLE);
+        float delta = 400f;
+        app.getControls().changeAngle(delta);
+        float newExpectedAngle = Misc.bound(startAngle + delta, DotParams.ANGLE_LIMIT);
+
+        float newParamAngle = app.getControls().getCurrentParams().get(DotParams.START_ANGLE);
+
+        Assert.assertEquals(newExpectedAngle, newParamAngle, 0.01f);
+        Assert.assertEquals(newExpectedAngle,
+                app.getControls().getObject("Cannon").getParams().get(DotParams.START_ANGLE), 0.01f);
+    }
+
 }
