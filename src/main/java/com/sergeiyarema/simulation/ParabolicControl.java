@@ -87,7 +87,7 @@ public class ParabolicControl extends AbstractControl {
 
     private static List<Spatial> createNewTrail() {
         List<Spatial> currentTrail = new ArrayList<>();
-        if (trailsList.size() > MAX_TRAILS) {
+        if (trailsList.size() >= MAX_TRAILS) {
             for (Spatial el : trailsList.get(0)) {
                 el.removeFromParent();
             }

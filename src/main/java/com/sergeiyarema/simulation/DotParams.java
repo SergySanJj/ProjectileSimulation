@@ -1,5 +1,6 @@
 package com.sergeiyarema.simulation;
 
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 
 import java.util.HashMap;
@@ -13,6 +14,10 @@ public class DotParams implements Copiable<DotParams>, Comparable<DotParams> {
     public static final String GROUND_LEVEL = "GroundLevel";
     public static final String RADIUS = "Radius";
 
+    private static final Vector2f ANGLE_LIMIT = new Vector2f(10f, 170f);
+    private static final Vector2f SPEED_LIMIT = new Vector2f(0f, 200f);
+    private static final Vector2f GRAVITY_LIMIT = new Vector2f(0.1f, 100f);
+
     private Map<String, ChangeableByDelta> mapping = new HashMap<>();
     private Vector3f startPos;
 
@@ -21,9 +26,9 @@ public class DotParams implements Copiable<DotParams>, Comparable<DotParams> {
 
     public DotParams(Vector3f startPos, float startAngle, float startSpeed, float groundLevel, float gravity) {
         this.startPos = startPos.clone();
-        set(START_ANGLE, startAngle);
-        set(START_SPEED, startSpeed);
-        set(GRAVITY, gravity);
+        set(START_ANGLE, startAngle).setBoundary(ANGLE_LIMIT);
+        set(START_SPEED, startSpeed).setBoundary(SPEED_LIMIT);
+        set(GRAVITY, gravity).setBoundary(GRAVITY_LIMIT);
         set(GROUND_LEVEL, groundLevel);
         set(RADIUS, 0.5f);
     }
@@ -49,10 +54,12 @@ public class DotParams implements Copiable<DotParams>, Comparable<DotParams> {
         return mapping.get(valueName);
     }
 
-    public void set(String valueName, float newValue) {
+
+    public ChangeableByDelta set(String valueName, float newValue) {
         ChangeableByDelta newChangeable = new ChangeableByDelta();
         newChangeable.setValue(newValue);
         mapping.put(valueName, newChangeable);
+        return newChangeable;
     }
 
     @Override

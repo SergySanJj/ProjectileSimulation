@@ -10,6 +10,8 @@ import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.sergeiyarema.simulation.ParabolicControl.MAX_TRAILS;
+
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
         //can use in method only.
@@ -121,5 +123,16 @@ public class ApplicationTest {
 
         Assert.assertEquals(app.getControls().getCurrentParams().getStartPos(),
                 app.getControls().getObject("Cannon").getLocalTranslation());
+    }
+
+    @AfterAppStart
+    private void projectileFiring() {
+        for (int i = 1; i <= MAX_TRAILS; i++) {
+            app.getControls().fire();
+            Assert.assertEquals(i, ParabolicControl.trailsCount());
+        }
+
+        app.getControls().fire();
+        Assert.assertEquals(MAX_TRAILS, ParabolicControl.trailsCount());
     }
 }

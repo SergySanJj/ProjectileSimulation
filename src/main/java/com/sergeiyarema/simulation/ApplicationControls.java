@@ -5,6 +5,7 @@ import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
@@ -33,7 +34,7 @@ public class ApplicationControls {
     private static final String CLEAR = "Clear";
 
     private static final float GROUND = -5f;
-    private static final float CONTROL_SPEED = 3f;
+    private static final float CONTROL_SPEED = 2f;
 
     private InputManager inputManager;
     private Camera cam;
@@ -87,9 +88,13 @@ public class ApplicationControls {
     }
 
     private void horizontalCamMove(float delta) {
-        Vector3f currLocation = cam.getLocation();
-        currLocation.x += delta;
-        cam.setLocation(currLocation);
+        Vector3f currCamLocation = cam.getLocation();
+        currCamLocation.x += delta;
+        cam.setLocation(currCamLocation);
+
+        Vector3f currFloor = ((Floor) objects.get("Floor")).getLocalTranslation();
+        ((Floor) objects.get("Floor")).setLocalTranslation(
+                new Vector3f(currCamLocation.x, currFloor.y, currFloor.z));
     }
 
     private void verticalCamMove(float delta) {
@@ -205,7 +210,7 @@ public class ApplicationControls {
         changeParamByDelta(START_ANGLE, delta);
     }
 
-    private void fire() {
+    public void fire() {
         ((Projectile) getObject("Projectile")).fire(currentParams);
     }
 
