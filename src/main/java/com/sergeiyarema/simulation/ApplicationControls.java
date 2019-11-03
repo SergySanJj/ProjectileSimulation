@@ -122,14 +122,14 @@ public class ApplicationControls {
         inputManager.addMapping(CLEAR, new KeyTrigger(KeyInput.KEY_DELETE));
 
         inputManager.addListener(actionListener,
-                INCREASE_ANGLE, DECREASE_ANGLE,
                 FIRE,
                 INCREASE_GRAVITY, DECREASE_GRAVITY,
                 INCREASE_SPEED, DECREASE_SPEED,
                 CLEAR);
         inputManager.addListener(analogListener,
                 ZOOM_IN, ZOOM_OUT,
-                CAM_LEFT, CAM_RIGHT, CAM_UP, CAM_DOWN);
+                CAM_LEFT, CAM_RIGHT, CAM_UP, CAM_DOWN,
+                INCREASE_ANGLE, DECREASE_ANGLE);
     }
 
     private final AnalogListener analogListener = (name, value, tpf) -> {
@@ -152,10 +152,15 @@ public class ApplicationControls {
             case CAM_DOWN:
                 verticalCamMove(-10.f * cameraSize * value);
                 break;
+            case INCREASE_ANGLE:
+                changeAngle(100.f * value);
+                break;
+            case DECREASE_ANGLE:
+                changeAngle(-100.f * value);
+                break;
             default:
                 break;
         }
-        System.out.println("Cam coords " + cam.getLocation().y + " zoom " + cameraSize);
     };
 
     private final ActionListener actionListener = (name, keyPressed, tpf) -> {
@@ -166,12 +171,6 @@ public class ApplicationControls {
                     break;
                 case DECREASE_GRAVITY:
                     changeParamByDelta(GRAVITY, -1.f);
-                    break;
-                case INCREASE_ANGLE:
-                    changeAngle(5.f);
-                    break;
-                case DECREASE_ANGLE:
-                    changeAngle(-5.f);
                     break;
                 case INCREASE_SPEED:
                     changeParamByDelta(START_SPEED, 1f);
