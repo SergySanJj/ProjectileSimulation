@@ -11,6 +11,7 @@ import com.jme3.scene.control.AbstractControl;
 import com.jme3.scene.shape.Sphere;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static com.sergeiyarema.simulation.DotParams.*;
@@ -76,18 +77,24 @@ public class ParabolicControl extends AbstractControl {
     protected void controlRender(RenderManager rm, ViewPort vp) { // default implementation ignored
     }
 
-    public static void clearTrails() {
+    public static void clearFinishedTrails() {
         for (List<Spatial> spatialList : trailsList) {
+            if (spatialList.equals(trailsList.get(trailsList.size() - 1)))
+                continue;
             for (Spatial spatial : spatialList) {
                 spatial.removeFromParent();
             }
         }
-        trailsList.clear();
+        if (!trailsList.isEmpty()) {
+            List<Spatial> last = trailsList.get(trailsList.size() - 1);
+            trailsList.clear();
+            trailsList.add(last);
+        }
     }
 
     private static List<Spatial> createNewTrail() {
         List<Spatial> currentTrail = new ArrayList<>();
-        if (trailsList.size() >= MAX_TRAILS) {
+        while (trailsList.size() >= MAX_TRAILS) {
             for (Spatial el : trailsList.get(0)) {
                 el.removeFromParent();
             }

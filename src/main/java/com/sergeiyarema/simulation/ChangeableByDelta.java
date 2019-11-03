@@ -8,11 +8,7 @@ public class ChangeableByDelta {
     private Vector2f boundary;
 
     public void changeBy(float delta) {
-        if (boundary == null)
-            value += delta;
-        else {
-            value = Misc.bound(value + delta, boundary);
-        }
+        value = Misc.bound(value + delta, boundary);
     }
 
     public void setBoundary(Vector2f bounder) {
@@ -24,6 +20,6 @@ public class ChangeableByDelta {
     }
 
     public void setValue(float newValue) {
-        value = newValue;
+        value = Misc.bound(newValue, boundary);
     }
 }

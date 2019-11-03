@@ -1,7 +1,9 @@
 package com.sergeiyarema.simulation;
 
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
+import com.sergeiyarema.misc.Misc;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -13,14 +15,14 @@ import java.util.logging.Logger;
 import static com.sergeiyarema.simulation.ParabolicControl.MAX_TRAILS;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
+@Target({ElementType.METHOD})
         //can use in method only.
 @interface BeforeAppStart {
     public boolean enabled() default true;
 }
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
+@Target({ElementType.METHOD})
         //can use in method only.
 @interface AfterAppStart {
     public boolean enabled() default true;
@@ -118,6 +120,7 @@ public class ApplicationTest {
         Assert.assertEquals(app.getControls().getCurrentParams().getStartPos(),
                 app.getControls().getObject("Projectile").getLocalTranslation());
 
+
         Assert.assertEquals(app.getControls().getFloorParams().getStartPos(),
                 app.getControls().getObject("Floor").getLocalTranslation());
 
@@ -135,4 +138,59 @@ public class ApplicationTest {
         app.getControls().fire();
         Assert.assertEquals(MAX_TRAILS, ParabolicControl.trailsCount());
     }
+
+    @AfterAppStart
+    private void cameraChanges() {
+        Vector3f move = new Vector3f(1f, -1f, 0f);
+
+
+        final Vector3f startCamCoords = app.getControls().getCameraCoordinates().clone();
+
+
+        float startCamSize = app.getControls().getCameraSize().getValue();
+
+        // Move
+        app.getControls().horizontalCamMove(move.x);
+        app.getControls().verticalCamMove(move.y);
+        Vector3f moveCamCoords = app.getControls().getCameraCoordinates();
+        Assert.assertEquals(startCamCoords.add(move), moveCamCoords);
+        Assert.assertEquals(startCamSize, app.getControls().getCameraSize().getValue(), 0.01f);
+
+
+        move = new Vector3f(-1f, 1f, 0f);
+        app.getControls().horizontalCamMove(move.x);
+        app.getControls().verticalCamMove(move.y);
+        moveCamCoords = app.getControls().getCameraCoordinates().clone();
+        Assert.assertEquals(startCamCoords, moveCamCoords);
+        Assert.assertEquals(startCamSize, app.getControls().getCameraSize().getValue(), 0.01f);
+
+        // Normal Zoom
+        startCamSize = app.getControls().getCameraSize().getValue();
+        float mult = 1.1f;
+        app.getControls().zoom(mult);
+        float expectedZoom = Misc.bound(startCamSize * mult, app.getControls().zoomBoundary);
+        Assert.assertEquals(expectedZoom, app.getControls().getCameraSize().getValue(), 0.01f);
+        app.getControls().zoom(1 / mult);
+        expectedZoom = Misc.bound(expectedZoom / mult, app.getControls().zoomBoundary);
+        Assert.assertEquals(expectedZoom, app.getControls().getCameraSize().getValue(), 0.01f);
+
+        // Bound Zoom
+        startCamSize = app.getControls().getCameraSize().getValue();
+        mult = 200f;
+        app.getControls().zoom(mult);
+        expectedZoom = Misc.bound(startCamSize * mult, app.getControls().zoomBoundary);
+        Assert.assertEquals(expectedZoom, app.getControls().getCameraSize().getValue(), 0.01f);
+        app.getControls().zoom(1 / mult);
+        expectedZoom = Misc.bound(expectedZoom / mult, app.getControls().zoomBoundary);
+        Assert.assertEquals(expectedZoom, app.getControls().getCameraSize().getValue(), 0.01f);
+    }
+
+    @AfterAppStart
+    private void clearingTrails() {
+        app.getControls().clearTrajectoryTraces();
+        Assert.assertTrue(ParabolicControl.trailsCount() <= 1);
+        app.getControls().clearTrajectoryTraces();
+        Assert.assertTrue(ParabolicControl.trailsCount() <= 1);
+    }
+    
 }

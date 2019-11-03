@@ -9,7 +9,6 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
 
 import java.util.*;
 
@@ -17,30 +16,15 @@ import static com.sergeiyarema.simulation.DotParams.*;
 import static com.sergeiyarema.simulation.DotParams.START_SPEED;
 
 public class ApplicationControls {
-    // Control commands
-    private static final String ZOOM_IN = "ZoomIN";
-    private static final String ZOOM_OUT = "ZoomOUT";
-    private static final String INCREASE_ANGLE = "IncreaseAngle";
-    private static final String DECREASE_ANGLE = "DecreaseAngle";
-    private static final String FIRE = "Fire";
-    private static final String INCREASE_GRAVITY = "IncreaseGravity";
-    private static final String DECREASE_GRAVITY = "DecreaseGravity";
-    private static final String INCREASE_SPEED = "IncreaseSpeed";
-    private static final String DECREASE_SPEED = "DecreaseSpeed";
-    private static final String CAM_RIGHT = "CamRight";
-    private static final String CAM_LEFT = "CamLeft";
-    private static final String CAM_UP = "CamUp";
-    private static final String CAM_DOWN = "CamDown";
-    private static final String CLEAR = "Clear";
-
     private static final float GROUND = -5f;
-    private static final float CONTROL_SPEED = 2f;
 
     private InputManager inputManager;
+    private KeyMapper keyMapper;
     private Camera cam;
     private Node rootNode;
 
-    private float cameraSize = 14f;
+    public final Vector2f zoomBoundary = new Vector2f(5f, 20f);
+    private ChangeableByDelta cameraSize;
 
     private Map<String, SimulationObject> objects;
 
@@ -55,157 +39,67 @@ public class ApplicationControls {
         this.cam = cam;
         this.rootNode = rootNode;
 
-        objects = new HashMap<>();
+        keyMapper = new KeyMapper(this);
 
         initCameraSettings();
         inputManager.setCursorVisible(true);
-        initKeys();
 
-        Vector3f floorCoords = Floor.calculateCoordinatesFromTop(GROUND);
-        objects.put("Floor",
-                new Floor(getFloorParams(), rootNode));
-
+        objects = new HashMap<>();
+        objects.put("Floor", new Floor(getFloorParams(), rootNode));
         objects.put("Projectile", new Projectile(currentParams, rootNode));
         objects.put("Cannon", new Cannon(currentParams, rootNode));
     }
 
     private void initCameraSettings() {
+        cameraSize = new ChangeableByDelta();
+        cameraSize.setValue(14f);
+        cameraSize.setBoundary(zoomBoundary);
+
         cam.setParallelProjection(true);
         updateCameraFrustum();
     }
 
-    private void updateCameraFrustum() {
+    public void updateCameraFrustum() {
         float aspect = (float) cam.getWidth() / cam.getHeight();
         cam.setFrustum(-1000, 1000,
-                -aspect * cameraSize, aspect * cameraSize,
-                cameraSize, -cameraSize);
-        setCamY(cameraSize + GROUND - 1.5f); // Interpolated linear formula
+                -aspect * cameraSize.getValue(), aspect * cameraSize.getValue(),
+                cameraSize.getValue(), -cameraSize.getValue());
+        setCamY(cameraSize.getValue() + GROUND - 1.5f); // Interpolated linear formula
     }
 
-    private void zoom(float scale) {
-        cameraSize = cameraSize * scale;
+    public void zoom(float scale) {
+        cameraSize.setValue(cameraSize.getValue() * scale);
         updateCameraFrustum();
     }
 
-    private void horizontalCamMove(float delta) {
-        Vector3f currCamLocation = cam.getLocation();
+    public void horizontalCamMove(float delta) {
+        Vector3f currCamLocation = cam.getLocation().clone();
         currCamLocation.x += delta;
         cam.setLocation(currCamLocation);
 
-        Vector3f currFloor = ((Floor) objects.get("Floor")).getLocalTranslation();
-        ((Floor) objects.get("Floor")).setLocalTranslation(
+        Vector3f currFloor = objects.get("Floor").getLocalTranslation();
+        objects.get("Floor").setLocalTranslation(
                 new Vector3f(currCamLocation.x, currFloor.y, currFloor.z));
     }
 
-    private void verticalCamMove(float delta) {
-        Vector3f currLocation = cam.getLocation();
+    public void verticalCamMove(float delta) {
+        Vector3f currLocation = cam.getLocation().clone();
         currLocation.y += delta;
         cam.setLocation(currLocation);
     }
 
-    private void setCamY(float y) {
+    public void setCamY(float y) {
         Vector3f currLocation = cam.getLocation();
         currLocation.y = y;
         cam.setLocation(currLocation);
     }
 
-    private void initKeys() {
-        inputManager.addMapping(ZOOM_IN, new KeyTrigger(KeyInput.KEY_EQUALS));
-        inputManager.addMapping(ZOOM_OUT, new KeyTrigger(KeyInput.KEY_MINUS));
 
-        inputManager.addMapping(INCREASE_ANGLE, new KeyTrigger(KeyInput.KEY_W));
-        inputManager.addMapping(DECREASE_ANGLE, new KeyTrigger(KeyInput.KEY_S));
-
-        inputManager.addMapping(FIRE, new KeyTrigger(KeyInput.KEY_F));
-
-        inputManager.addMapping(INCREASE_GRAVITY, new KeyTrigger(KeyInput.KEY_I));
-        inputManager.addMapping(DECREASE_GRAVITY, new KeyTrigger(KeyInput.KEY_U));
-
-        inputManager.addMapping(INCREASE_SPEED, new KeyTrigger(KeyInput.KEY_X));
-        inputManager.addMapping(DECREASE_SPEED, new KeyTrigger(KeyInput.KEY_Z));
-
-        inputManager.addMapping(CAM_RIGHT, new KeyTrigger(KeyInput.KEY_RIGHT));
-        inputManager.addMapping(CAM_LEFT, new KeyTrigger(KeyInput.KEY_LEFT));
-        inputManager.addMapping(CAM_UP, new KeyTrigger(KeyInput.KEY_UP));
-        inputManager.addMapping(CAM_DOWN, new KeyTrigger(KeyInput.KEY_DOWN));
-
-        inputManager.addMapping(CLEAR, new KeyTrigger(KeyInput.KEY_DELETE));
-
-        inputManager.addListener(actionListener,
-                FIRE,
-                INCREASE_GRAVITY, DECREASE_GRAVITY,
-                INCREASE_SPEED, DECREASE_SPEED,
-                CLEAR);
-        inputManager.addListener(analogListener,
-                ZOOM_IN, ZOOM_OUT,
-                CAM_LEFT, CAM_RIGHT, CAM_UP, CAM_DOWN,
-                INCREASE_ANGLE, DECREASE_ANGLE);
-    }
-
-    private final AnalogListener analogListener = (name, value, tpf) -> {
-        value = value * CONTROL_SPEED;
-        switch (name) {
-            case ZOOM_IN:
-                zoom(1.f - 4f * value);
-                break;
-            case ZOOM_OUT:
-                zoom(1.f + 4f * value);
-                break;
-            case CAM_RIGHT:
-                horizontalCamMove(10.f * cameraSize * value);
-                break;
-            case CAM_LEFT:
-                horizontalCamMove(-10.f * cameraSize * value);
-                break;
-            case CAM_UP:
-                verticalCamMove(10.f * cameraSize * value);
-                break;
-            case CAM_DOWN:
-                verticalCamMove(-10.f * cameraSize * value);
-                break;
-            case INCREASE_ANGLE:
-                changeAngle(100.f * value);
-                break;
-            case DECREASE_ANGLE:
-                changeAngle(-100.f * value);
-                break;
-            default:
-                break;
-        }
-    };
-
-    private final ActionListener actionListener = (name, keyPressed, tpf) -> {
-        if (!keyPressed) {
-            switch (name) {
-                case INCREASE_GRAVITY:
-                    changeParamByDelta(GRAVITY, 1.f);
-                    break;
-                case DECREASE_GRAVITY:
-                    changeParamByDelta(GRAVITY, -1.f);
-                    break;
-                case INCREASE_SPEED:
-                    changeParamByDelta(START_SPEED, 1f);
-                    break;
-                case DECREASE_SPEED:
-                    changeParamByDelta(START_SPEED, -1f);
-                    break;
-                case FIRE:
-                    fire();
-                    break;
-                case CLEAR:
-                    clearTrajectoryTraces();
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
-
-    private void changeParamByDelta(String paramName, float delta) {
+    public void changeParamByDelta(String paramName, float delta) {
         this.currentParams.getChangeable(paramName).changeBy(delta);
     }
 
-    private void changeAngle(float delta) {
+    public void changeAngle(float delta) {
         ((Cannon) getObject("Cannon")).setAngle(currentParams.get(START_ANGLE) + delta);
         changeParamByDelta(START_ANGLE, delta);
     }
@@ -214,14 +108,8 @@ public class ApplicationControls {
         ((Projectile) getObject("Projectile")).fire(currentParams);
     }
 
-    private void clearTrajectoryTraces() {
-        ParabolicControl.clearTrails();
-        List<Spatial> children = rootNode.getChildren();
-        for (Spatial el : children) {
-            if (el.getName().equals("TrPoint")) {
-                el.removeFromParent();
-            }
-        }
+    public void clearTrajectoryTraces() {
+        ParabolicControl.clearFinishedTrails();
     }
 
     public DotParams getCurrentParams() {
@@ -236,5 +124,17 @@ public class ApplicationControls {
         Vector3f floorCoords = Floor.calculateCoordinatesFromTop(GROUND);
         return new DotParams(floorCoords, currentParams.get(START_ANGLE), currentParams.get(START_SPEED),
                 GROUND, currentParams.get(GRAVITY));
+    }
+
+    public InputManager getInputManager() {
+        return inputManager;
+    }
+
+    public ChangeableByDelta getCameraSize(){
+        return cameraSize;
+    }
+
+    public Vector3f getCameraCoordinates(){
+        return cam.getLocation().clone();
     }
 }

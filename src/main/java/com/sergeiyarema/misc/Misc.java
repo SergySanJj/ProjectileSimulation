@@ -22,6 +22,8 @@ public class Misc {
     }
 
     public static float bound(float x, Vector2f bounder) {
+        if (bounder==null)
+            return x;
         return bound(x, bounder.x, bounder.y);
     }
 }
