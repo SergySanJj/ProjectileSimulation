@@ -10,9 +10,7 @@ import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.sergeiyarema.simulation.DotParams.*;
 import static com.sergeiyarema.simulation.DotParams.START_SPEED;
@@ -35,6 +33,7 @@ public class ApplicationControls {
     private static final String CLEAR = "Clear";
 
     private static final float GROUND = -5f;
+    private static final float CONTROL_SPEED = 3f;
 
     private InputManager inputManager;
     private Camera cam;
@@ -139,6 +138,7 @@ public class ApplicationControls {
     }
 
     private final AnalogListener analogListener = (name, value, tpf) -> {
+        value = value * CONTROL_SPEED;
         switch (name) {
             case ZOOM_IN:
                 zoom(1.f - 4f * value);

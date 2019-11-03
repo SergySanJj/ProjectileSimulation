@@ -21,10 +21,13 @@ public class Cannon extends SimulationObject {
         this.params = params.copy();
         Material matGray = new Material(GlobalAssets.manager(), "Common/MatDefs/Misc/Unshaded.j3md");
         matGray.setColor("Color", ColorRGBA.Gray);
+
+        float radius = params.get(RADIUS) * 1.1f;
+        float height = params.get(RADIUS) * 6f;
+
         geometry =
                 new Geometry("Canon",
-                        new Cylinder(32, 32,
-                                params.get(RADIUS) * 1.1f, params.get(RADIUS) * 6f, true));
+                        new Cylinder(32, 32, radius, height, true));
 
         geometry.setMaterial(matGray);
         geometry.move(params.getStartPos());

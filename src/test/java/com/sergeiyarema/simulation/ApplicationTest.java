@@ -8,6 +8,7 @@ import org.junit.Test;
 import java.lang.annotation.*;
 import java.lang.reflect.Method;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
@@ -25,6 +26,9 @@ import java.util.logging.Level;
 
 public class ApplicationTest {
     private Application app = new Application();
+    private Vector3f defaultCoords = new Vector3f(10f, 100f, 1000f);
+    private DotParams dotParams = new DotParams(defaultCoords,
+            45f, 20f, 100f, 9.80665f);
 
     @Test
     public void testChain() {
@@ -48,14 +52,14 @@ public class ApplicationTest {
                 try {
                     method.invoke(this);
                 } catch (Exception e) {
-                    System.out.println("Assert in " + method.getClass().getName() + "." + method.getName() + "()");
+                    Logger.getLogger("Test").log(Level.SEVERE, "Assert in " + method.getClass().getName() + "." + method.getName() + "()");
                     e.printStackTrace();
                     Assert.assertNotNull(null);
                 }
                 testsRun++;
             }
         }
-        System.out.println("Tests count " + testsRun);
+        Logger.getLogger("Test").log(Level.WARNING, "Tests count " + testsRun);
     }
 
     // BEFORE
@@ -88,12 +92,17 @@ public class ApplicationTest {
     @AfterAppStart
     private void projectileTestAfter() {
         Node node = new Node();
-        Vector3f projectileCoords = new Vector3f(10f, 100f, 1000f);
-        DotParams dotParams = new DotParams(projectileCoords,
-                45f, 20f, 100f, 9.80665f);
         Projectile projectile1 = new Projectile(dotParams, node);
         Assert.assertEquals(dotParams, projectile1.getParams());
-        Assert.assertEquals(projectileCoords, projectile1.getLocalTranslation());
+        Assert.assertEquals(defaultCoords, projectile1.getLocalTranslation());
+    }
+
+    @AfterAppStart
+    private void cannonTestAfter() {
+        Node node = new Node();
+        Cannon cannon1 = new Cannon(dotParams, node);
+        Assert.assertEquals(dotParams, cannon1.getParams());
+        Assert.assertEquals(defaultCoords, cannon1.getLocalTranslation());
     }
 
     @AfterAppStart
