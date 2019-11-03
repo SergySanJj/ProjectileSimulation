@@ -17,13 +17,13 @@ public class DotParamsTest {
     public void copy() {
         DotParams dotParamsCopy = dotParamsOriginal.copy();
 
-        Assert.assertNotEquals(dotParamsCopy, dotParamsOriginal); // Really creates new object
+        Assert.assertNotEquals(dotParamsOriginal, dotParamsCopy); // Really creates new object
         Assert.assertEquals(0, dotParamsCopy.compareTo(dotParamsOriginal)); // Same data
     }
 
     @Test
     public void getStartPos() {
-        Assert.assertEquals(dotParamsOriginal.getStartPos(), new Vector3f(1f, 1f, 1f));
+        Assert.assertEquals(Vector3f.UNIT_XYZ, dotParamsOriginal.getStartPos());
     }
 
     @Test
@@ -31,15 +31,15 @@ public class DotParamsTest {
         DotParams dotParamsCopy = dotParamsOriginal.copy();
         Vector3f newPos = new Vector3f(10f, 10f, 10f);
         dotParamsCopy.setStartPos(newPos.clone());
-        Assert.assertEquals(dotParamsCopy.getStartPos(), newPos);
+        Assert.assertEquals(newPos, dotParamsCopy.getStartPos());
     }
 
     @Test
     public void get() {
-        Assert.assertEquals(dotParamsOriginal.get(START_ANGLE), 45.f, 0.001);
-        Assert.assertEquals(dotParamsOriginal.get(START_SPEED), 10.f, 0.001);
-        Assert.assertEquals(dotParamsOriginal.get(GROUND_LEVEL), -3.f, 0.001);
-        Assert.assertEquals(dotParamsOriginal.get(GRAVITY), 9f, 0.001);
+        Assert.assertEquals(45f, dotParamsOriginal.get(START_ANGLE), 0.001);
+        Assert.assertEquals(10f, dotParamsOriginal.get(START_SPEED), 0.001);
+        Assert.assertEquals(-3f, dotParamsOriginal.get(GROUND_LEVEL), 0.001);
+        Assert.assertEquals(9f, dotParamsOriginal.get(GRAVITY), 0.001);
     }
 
     @Rule
@@ -53,10 +53,10 @@ public class DotParamsTest {
 
     @Test
     public void getChangeable() {
-        Assert.assertEquals(dotParamsOriginal.getChangeable(START_ANGLE).getValue(), 45.f, 0.001);
-        Assert.assertEquals(dotParamsOriginal.getChangeable(START_SPEED).getValue(), 10.f, 0.001);
-        Assert.assertEquals(dotParamsOriginal.getChangeable(GROUND_LEVEL).getValue(), -3.f, 0.001);
-        Assert.assertEquals(dotParamsOriginal.getChangeable(GRAVITY).getValue(), 9f, 0.001);
+        Assert.assertEquals(45.f, dotParamsOriginal.getChangeable(START_ANGLE).getValue(), 0.001);
+        Assert.assertEquals(10.f, dotParamsOriginal.getChangeable(START_SPEED).getValue(), 0.001);
+        Assert.assertEquals(-3f, dotParamsOriginal.getChangeable(GROUND_LEVEL).getValue(), 0.001);
+        Assert.assertEquals(9f, dotParamsOriginal.getChangeable(GRAVITY).getValue(), 0.001);
     }
 
     @Test
@@ -72,9 +72,9 @@ public class DotParamsTest {
         dotParamsCopy.set(START_ANGLE, -1f);
         dotParamsCopy.set(GRAVITY, -1f);
 
-        Assert.assertEquals(dotParamsCopy.getChangeable(START_ANGLE).getValue(), -1f, 0.001);
-        Assert.assertEquals(dotParamsCopy.getChangeable(START_SPEED).getValue(), -1f, 0.001);
-        Assert.assertEquals(dotParamsCopy.getChangeable(GRAVITY).getValue(), -1f, 0.001);
+        Assert.assertEquals(-1f, dotParamsCopy.getChangeable(START_ANGLE).getValue(), 0.001);
+        Assert.assertEquals(-1f, dotParamsCopy.getChangeable(START_SPEED).getValue(), 0.001);
+        Assert.assertEquals(-1f, dotParamsCopy.getChangeable(GRAVITY).getValue(), 0.001);
     }
 
     @Test

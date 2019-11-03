@@ -32,7 +32,9 @@ public class ApplicationTest {
         processAnnotated(BeforeAppStart.class);
         Thread appThread = new Thread(() -> app.start());
         appThread.start();
-        while (!app.isReady()) ;
+        //app.start();
+        while (!app.isReady()){
+        }
         processAnnotated(AfterAppStart.class);
 
         appThread.interrupt();

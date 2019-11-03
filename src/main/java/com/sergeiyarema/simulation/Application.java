@@ -8,7 +8,7 @@ import com.jme3.system.AppSettings;
 public class Application extends SimpleApplication {
     public static final int WINDOW_HEIGHT = 800;
     public static final int WINDOW_WIDTH = 1000;
-    private boolean isReady = false;
+    private volatile boolean isReady = false;
 
     public Application() {
         super();
@@ -18,7 +18,6 @@ public class Application extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
-
         GlobalAssets.innitAssets(this.assetManager);
         flyCam.setEnabled(false);
         ApplicationControls applicationControls = new ApplicationControls(inputManager, cam, rootNode);
@@ -45,7 +44,7 @@ public class Application extends SimpleApplication {
         return getSettings();
     }
 
-    public boolean isReady() {
+    public synchronized boolean isReady() {
         return isReady;
     }
 }
