@@ -37,10 +37,11 @@ public class ApplicationTest {
         }
         processAnnotated(AfterAppStart.class);
 
+        app.requestClose(true);
         appThread.interrupt();
     }
 
-    private void processAnnotated(Class classRef) {
+    private void processAnnotated(Class<? extends Annotation> classRef) {
         int testsRun = 0;
         for (Method method : ApplicationTest.class.getDeclaredMethods()) {
             if (method.isAnnotationPresent(classRef)) {
@@ -75,7 +76,7 @@ public class ApplicationTest {
     }
 
     @AfterAppStart
-    private void floorTestAfter() {
+    private void floorCreationTest() {
         Node node = new Node();
         Vector3f floorCoords = Floor.calculateCoordinatesFromTop(100f);
         Floor floor1 =
@@ -85,9 +86,31 @@ public class ApplicationTest {
     }
 
     @AfterAppStart
-    private void projectileStartTranslation() {
-        //todo
-//        Assert.assertEquals(app.getControls().getCurrentParams().getStartPos(),
-//                );
+    private void projectileTestAfter() {
+        Node node = new Node();
+        Vector3f projectileCoords = new Vector3f(10f, 100f, 1000f);
+        DotParams dotParams = new DotParams(projectileCoords,
+                45f, 20f, 100f, 9.80665f);
+        Projectile projectile1 = new Projectile(dotParams, node);
+        Assert.assertEquals(dotParams, projectile1.getParams());
+        Assert.assertEquals(projectileCoords, projectile1.getLocalTranslation());
+    }
+
+    @AfterAppStart
+    private void startupObjectsCreated() {
+        // Check existence
+        Assert.assertNotNull(app.getControls().getObject("Projectile"));
+        Assert.assertNotNull(app.getControls().getObject("Floor"));
+        Assert.assertNotNull(app.getControls().getObject("Cannon"));
+
+        // Check correct coords
+        Assert.assertEquals(app.getControls().getCurrentParams().getStartPos(),
+                app.getControls().getObject("Projectile").getLocalTranslation());
+
+        Assert.assertEquals(app.getControls().getFloorParams().getStartPos(),
+                app.getControls().getObject("Floor").getLocalTranslation());
+
+        Assert.assertEquals(app.getControls().getCurrentParams().getStartPos(),
+                app.getControls().getObject("Cannon").getLocalTranslation());
     }
 }

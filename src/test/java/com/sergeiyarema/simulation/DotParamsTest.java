@@ -104,6 +104,5 @@ public class DotParamsTest {
         Assert.assertTrue(dotParamsA.equals(dotParamsB));
         Assert.assertFalse(dotParamsA.equals(different));
         Assert.assertFalse(dotParamsA.equals(new Object()));
-
     }
 }

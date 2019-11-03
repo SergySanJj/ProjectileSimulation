@@ -4,6 +4,7 @@ import com.jme3.math.Vector3f;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class DotParams implements Copiable<DotParams>, Comparable<DotParams> {
     public static final String GRAVITY = "Gravity";
@@ -80,5 +81,10 @@ public class DotParams implements Copiable<DotParams>, Comparable<DotParams> {
         }
         DotParams dt = (DotParams) o;
         return (this.compareTo(dt) == 0);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(startPos, mapping);
     }
 }

@@ -63,7 +63,7 @@ public class ApplicationControls {
 
         Vector3f floorCoords = Floor.calculateCoordinatesFromTop(GROUND);
         objects.put("Floor",
-                new Floor(new DotParams(floorCoords, 45f, 20f, GROUND, 9.80665f), rootNode));
+                new Floor(getFloorParams(), rootNode));
 
         objects.put("Projectile", new Projectile(currentParams, rootNode));
         objects.put("Cannon", new Cannon(currentParams, rootNode));
@@ -201,12 +201,12 @@ public class ApplicationControls {
     }
 
     private void changeAngle(float delta) {
-        ((Cannon) objects.get("Cannon")).setAngle(currentParams.get(START_ANGLE) + delta);
+        ((Cannon) getObject("Cannon")).setAngle(currentParams.get(START_ANGLE) + delta);
         changeParamByDelta(START_ANGLE, delta);
     }
 
     private void fire() {
-        ((Projectile) objects.get("Projectile")).fire(currentParams);
+        ((Projectile) getObject("Projectile")).fire(currentParams);
     }
 
     private void clearTrajectoryTraces() {
@@ -221,5 +221,15 @@ public class ApplicationControls {
 
     public DotParams getCurrentParams() {
         return currentParams;
+    }
+
+    public SimulationObject getObject(String name) {
+        return objects.get(name);
+    }
+
+    public DotParams getFloorParams() {
+        Vector3f floorCoords = Floor.calculateCoordinatesFromTop(GROUND);
+        return new DotParams(floorCoords, currentParams.get(START_ANGLE), currentParams.get(START_SPEED),
+                GROUND, currentParams.get(GRAVITY));
     }
 }
