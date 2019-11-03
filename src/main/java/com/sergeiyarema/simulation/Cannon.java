@@ -12,15 +12,13 @@ import com.jme3.scene.shape.Cylinder;
 import static com.sergeiyarema.simulation.DotParams.RADIUS;
 import static com.sergeiyarema.simulation.DotParams.START_ANGLE;
 
-public class Cannon {
-    private Geometry geometry;
-    private DotParams dotParams;
+public class Cannon extends SimulationObject {
 
-    private Cannon() {
-    }
 
-    public Cannon(DotParams params, Node rootNode) {
-        this.dotParams = params.copy();
+    public Cannon(DotParams dotParams, Node rootNode) {
+        super(dotParams, rootNode);
+
+        this.params = params.copy();
         Material matGray = new Material(GlobalAssets.manager(), "Common/MatDefs/Misc/Unshaded.j3md");
         matGray.setColor("Color", ColorRGBA.Gray);
         geometry =
@@ -32,11 +30,11 @@ public class Cannon {
         geometry.move(params.getStartPos());
         setAngle(params.get(START_ANGLE));
 
-        rootNode.attachChild(geometry);
+        node.attachChild(geometry);
     }
 
     public void setAngle(float angle) {
-        dotParams.set(START_ANGLE, angle);
+        params.set(START_ANGLE, angle);
 
         Quaternion cameraAlign = new Quaternion();
         cameraAlign.fromAngleAxis(FastMath.PI / 2.f, new Vector3f(0, 1, 0));

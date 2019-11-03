@@ -13,7 +13,7 @@ public class Logger {
     public static boolean log(String message, MODE mode) {
         if (mode.compareTo(currentMode) >= 0)
             return true;
-        java.util.logging.Logger.getLogger("").log(Level.ALL,"    " + message);
+        java.util.logging.Logger.getLogger("").log(Level.ALL, "    {0}", message);
         return false;
     }
 

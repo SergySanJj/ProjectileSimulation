@@ -1,5 +1,6 @@
 package com.sergeiyarema.simulation;
 
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import org.junit.Assert;
 import org.junit.Test;
@@ -76,8 +77,11 @@ public class ApplicationTest {
     @AfterAppStart
     private void floorTestAfter() {
         Node node = new Node();
-        Floor floor1 = new Floor(node, 0f);
-        Assert.assertEquals(0f, floor1.getTopCoordinate(), 0.001f);
+        Vector3f floorCoords = Floor.calculateCoordinatesFromTop(100f);
+        Floor floor1 =
+                new Floor(new DotParams(floorCoords,
+                        45f, 20f, 100f, 9.80665f), node);
+        Assert.assertEquals(100f, floor1.getTopCoordinate(), 0.001f);
     }
 
     @AfterAppStart

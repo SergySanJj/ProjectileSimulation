@@ -17,7 +17,7 @@ public class DotParamsTest {
     public void copy() {
         DotParams dotParamsCopy = dotParamsOriginal.copy();
 
-        Assert.assertNotEquals(dotParamsOriginal, dotParamsCopy); // Really creates new object
+        Assert.assertNotEquals(dotParamsOriginal.hashCode(), dotParamsCopy.hashCode()); // Really creates new object
         Assert.assertEquals(0, dotParamsCopy.compareTo(dotParamsOriginal)); // Same data
     }
 

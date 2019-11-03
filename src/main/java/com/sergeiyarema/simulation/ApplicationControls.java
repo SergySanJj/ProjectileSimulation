@@ -10,7 +10,9 @@ import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.sergeiyarema.simulation.DotParams.*;
 import static com.sergeiyarema.simulation.DotParams.START_SPEED;
@@ -40,9 +42,7 @@ public class ApplicationControls {
 
     private float cameraSize = 14f;
 
-    private Projectile pr;
-    private Floor fl;
-    private Cannon cannon;
+    private Map<String, SimulationObject> objects;
 
     private DotParams currentParams =
             new DotParams(new Vector3f(-14.f, GROUND + 0.5f, 0.f), 45.f, 20f, GROUND, 9.80665f);
@@ -55,13 +55,18 @@ public class ApplicationControls {
         this.cam = cam;
         this.rootNode = rootNode;
 
+        objects = new HashMap<>();
+
         initCameraSettings();
         inputManager.setCursorVisible(true);
         initKeys();
 
-        fl = new Floor(rootNode, GROUND);
-        pr = createProjectile();
-        cannon = new Cannon(currentParams, rootNode);
+        Vector3f floorCoords = Floor.calculateCoordinatesFromTop(GROUND);
+        objects.put("Floor",
+                new Floor(new DotParams(floorCoords, 45f, 20f, GROUND, 9.80665f), rootNode));
+
+        objects.put("Projectile", new Projectile(currentParams, rootNode));
+        objects.put("Cannon", new Cannon(currentParams, rootNode));
     }
 
     private void initCameraSettings() {
@@ -196,16 +201,12 @@ public class ApplicationControls {
     }
 
     private void changeAngle(float delta) {
-        cannon.setAngle(currentParams.get(START_ANGLE) + delta);
+        ((Cannon) objects.get("Cannon")).setAngle(currentParams.get(START_ANGLE) + delta);
         changeParamByDelta(START_ANGLE, delta);
     }
 
-    private Projectile createProjectile() {
-        return new Projectile(currentParams, rootNode);
-    }
-
     private void fire() {
-        pr.fire(currentParams);
+        ((Projectile) objects.get("Projectile")).fire(currentParams);
     }
 
     private void clearTrajectoryTraces() {

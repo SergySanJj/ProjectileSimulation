@@ -9,45 +9,27 @@ import com.jme3.scene.shape.Sphere;
 
 import static com.sergeiyarema.simulation.DotParams.RADIUS;
 
-public class Projectile {
-    private DotParams dotParams;
-    private Geometry geometry;
+public class Projectile extends SimulationObject {
     private ParabolicControl control;
 
-
-    private Projectile() {
-    }
-
     public Projectile(DotParams dotParams, Node rootNode) {
+        super(dotParams, rootNode);
 
         Material matBlue = new Material(GlobalAssets.manager(), "Common/MatDefs/Misc/Unshaded.j3md");
         matBlue.setColor("Color", ColorRGBA.Blue);
         geometry =
                 new Geometry("Projectile",
-                        new Sphere(32, 32, dotParams.get(RADIUS), true, false));
+                        new Sphere(32, 32, params.get(RADIUS), true, false));
         geometry.setMaterial(matBlue);
-        geometry.setLocalTranslation(dotParams.getStartPos());
-        this.dotParams = dotParams.copy();
-        rootNode.attachChild(geometry);
+        geometry.setLocalTranslation(params.getStartPos());
+        node.attachChild(geometry);
     }
 
     public void fire(DotParams dotParams) {
         if (control != null)
             geometry.removeControl(control);
-        this.dotParams = dotParams.copy();
-        control = new ParabolicControl(this.dotParams);
+        this.params = dotParams.copy();
+        control = new ParabolicControl(this.params);
         geometry.addControl(control);
-    }
-
-    public DotParams getDotParams() {
-        return dotParams;
-    }
-
-    public Vector3f getLocalTranslation() {
-        return geometry.getLocalTranslation();
-    }
-
-    public void destroy() {
-        geometry.removeFromParent();
     }
 }
