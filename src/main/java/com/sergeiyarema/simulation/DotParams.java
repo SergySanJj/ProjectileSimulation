@@ -69,4 +69,16 @@ public class DotParams implements Copiable<DotParams>, Comparable<DotParams> {
         if (startPos.equals(dotParams.getStartPos()) && mappingCheck) return 0;
         else return -1;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        DotParams dt = (DotParams) o;
+        return (this.compareTo(dt) == 0);
+    }
 }

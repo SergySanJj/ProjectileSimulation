@@ -92,4 +92,18 @@ public class DotParamsTest {
         Assert.assertEquals(0, dotParamsA.compareTo(dotParamsB));
         Assert.assertEquals(0, dotParamsB.compareTo(dotParamsA));
     }
+
+    @Test
+    public void equals() {
+        DotParams dotParamsA = dotParamsOriginal.copy();
+        DotParams dotParamsB = dotParamsOriginal.copy();
+        DotParams different =
+                new DotParams(new Vector3f(0f, 0f, 0f), 45.f, 10f, -10f, 9f);
+
+        Assert.assertTrue(dotParamsA.equals(dotParamsA));
+        Assert.assertTrue(dotParamsA.equals(dotParamsB));
+        Assert.assertFalse(dotParamsA.equals(different));
+        Assert.assertFalse(dotParamsA.equals(new Object()));
+
+    }
 }

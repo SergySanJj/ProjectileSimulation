@@ -39,7 +39,9 @@ public class ApplicationControls {
     private Node rootNode;
 
     private float cameraSize = 14f;
+
     private Projectile pr;
+    private Floor fl;
     private Cannon cannon;
 
     private DotParams currentParams =
@@ -57,15 +59,14 @@ public class ApplicationControls {
         inputManager.setCursorVisible(true);
         initKeys();
 
-        Floor fl = new Floor(rootNode, GROUND);
+        fl = new Floor(rootNode, GROUND);
+        pr = createProjectile();
         cannon = new Cannon(currentParams, rootNode);
     }
 
     private void initCameraSettings() {
         cam.setParallelProjection(true);
         updateCameraFrustum();
-
-
     }
 
     private void updateCameraFrustum() {
@@ -204,9 +205,6 @@ public class ApplicationControls {
     }
 
     private void fire() {
-
-        if (pr == null)
-            pr = createProjectile();
         pr.fire(currentParams);
     }
 
@@ -218,5 +216,9 @@ public class ApplicationControls {
                 el.removeFromParent();
             }
         }
+    }
+
+    public DotParams getCurrentParams() {
+        return currentParams;
     }
 }

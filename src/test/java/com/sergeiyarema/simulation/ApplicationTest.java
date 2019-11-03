@@ -32,8 +32,7 @@ public class ApplicationTest {
         processAnnotated(BeforeAppStart.class);
         Thread appThread = new Thread(() -> app.start());
         appThread.start();
-        //app.start();
-        while (!app.isReady()){
+        while (!app.isReady()) {
         }
         processAnnotated(AfterAppStart.class);
 
@@ -63,6 +62,11 @@ public class ApplicationTest {
         Assert.assertNull(GlobalAssets.manager());
     }
 
+    @BeforeAppStart
+    private void trailsStartNumberZero() {
+        Assert.assertEquals(0, ParabolicControl.trailsCount());
+    }
+
     // AFTER
     @AfterAppStart
     private void globalAssetsTestAfter() {
@@ -74,5 +78,12 @@ public class ApplicationTest {
         Node node = new Node();
         Floor floor1 = new Floor(node, 0f);
         Assert.assertEquals(0f, floor1.getTopCoordinate(), 0.001f);
+    }
+
+    @AfterAppStart
+    private void projectileStartTranslation() {
+        //todo
+//        Assert.assertEquals(app.getControls().getCurrentParams().getStartPos(),
+//                );
     }
 }

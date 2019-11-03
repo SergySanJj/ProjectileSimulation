@@ -9,6 +9,7 @@ public class Application extends SimpleApplication {
     public static final int WINDOW_HEIGHT = 800;
     public static final int WINDOW_WIDTH = 1000;
     private volatile boolean isReady = false;
+    private ApplicationControls applicationControls;
 
     public Application() {
         super();
@@ -20,7 +21,7 @@ public class Application extends SimpleApplication {
     public void simpleInitApp() {
         GlobalAssets.innitAssets(this.assetManager);
         flyCam.setEnabled(false);
-        ApplicationControls applicationControls = new ApplicationControls(inputManager, cam, rootNode);
+        applicationControls = new ApplicationControls(inputManager, cam, rootNode);
         viewPort.setBackgroundColor(ColorRGBA.White);
 
         isReady = true;
@@ -46,5 +47,9 @@ public class Application extends SimpleApplication {
 
     public synchronized boolean isReady() {
         return isReady;
+    }
+
+    public ApplicationControls getControls() {
+        return applicationControls;
     }
 }

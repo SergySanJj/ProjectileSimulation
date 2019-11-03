@@ -73,7 +73,7 @@ public class ParabolicControl extends AbstractControl {
     }
 
     @Override
-    protected void controlRender(RenderManager rm, ViewPort vp) {
+    protected void controlRender(RenderManager rm, ViewPort vp) { // default implementation ignored
     }
 
     public static void clearTrails() {
@@ -97,7 +97,7 @@ public class ParabolicControl extends AbstractControl {
         return currentTrail;
     }
 
-    private static int trailsCount() {
+    public static int trailsCount() {
         return trailsList.size();
     }
 }
