@@ -26,10 +26,14 @@ public class Projectile extends SimulationObject {
     }
 
     public void fire(DotParams dotParams) {
-        if (control != null)
+        if (flying())
             geometry.removeControl(control);
         this.params = dotParams.copy();
         control = new ParabolicControl(this.params);
         geometry.addControl(control);
+    }
+
+    public boolean flying() {
+        return (geometry.getNumControls()!=0);
     }
 }

@@ -28,6 +28,13 @@ import static com.sergeiyarema.simulation.ParabolicControl.MAX_TRAILS;
     public boolean enabled() default true;
 }
 
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.METHOD})
+        //can use in method only.
+@interface LongTerm {
+    public boolean enabled() default true;
+}
+
 public class ApplicationTest {
     private Application app = new Application();
     private Vector3f defaultCoords = new Vector3f(10f, 100f, 1000f);
@@ -44,6 +51,7 @@ public class ApplicationTest {
         while (!app.isReady()) {
         }
         processAnnotated(AfterAppStart.class);
+        processAnnotated(LongTerm.class);
 
         app.requestClose(true);
         appThread.interrupt();
@@ -235,6 +243,16 @@ public class ApplicationTest {
         Assert.assertEquals(newExpectedAngle, newParamAngle, 0.01f);
         Assert.assertEquals(newExpectedAngle,
                 app.getControls().getObject("Cannon").getParams().get(DotParams.START_ANGLE), 0.01f);
+    }
+
+    @LongTerm
+    private void projectileLanding() {
+        app.getControls().setAngle(45);
+        app.getControls().fire();
+
+        while (((Projectile) app.getControls().getObject("Projectile")).flying()) ;
+        Assert.assertEquals(app.getControls().getCurrentParams().get(DotParams.GROUND_LEVEL) + app.getControls().getCurrentParams().get(DotParams.RADIUS),
+                ((Projectile) app.getControls().getObject("Projectile")).getLocalTranslation().y, 1f);
     }
 
 }
