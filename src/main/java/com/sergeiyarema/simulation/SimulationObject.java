@@ -35,4 +35,8 @@ public abstract class SimulationObject {
     public DotParams getParams() {
         return params.copy();
     }
+
+    public Node getContainerNode(){
+        return node;
+    }
 }

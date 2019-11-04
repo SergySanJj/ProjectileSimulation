@@ -84,6 +84,11 @@ public class ApplicationTest {
     }
 
     @AfterAppStart
+    private void appNameSet() {
+        Assert.assertEquals("Projectile simulation", app.getSettings().getTitle());
+    }
+
+    @AfterAppStart
     private void floorCreationTest() {
         Node node = new Node();
         Vector3f floorCoords = Floor.calculateCoordinatesFromTop(100f);
@@ -91,6 +96,9 @@ public class ApplicationTest {
                 new Floor(new DotParams(floorCoords,
                         45f, 20f, 100f, 9.80665f), node);
         Assert.assertEquals(100f, floor1.getTopCoordinate(), 0.001f);
+
+        floor1.destroy();
+        Assert.assertEquals(0, floor1.getContainerNode().getChildren().size());
     }
 
     @AfterAppStart

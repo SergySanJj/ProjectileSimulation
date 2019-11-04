@@ -68,13 +68,13 @@ public class DotParamsTest {
     @Test
     public void set() {
         DotParams dotParamsCopy = dotParamsOriginal.copy();
-        dotParamsCopy.set(START_SPEED, -1f);
-        dotParamsCopy.set(START_ANGLE, -1f);
-        dotParamsCopy.set(GRAVITY, -1f);
+        dotParamsCopy.set(START_SPEED, 10f);
+        dotParamsCopy.set(START_ANGLE, 10f);
+        dotParamsCopy.set(GRAVITY, 10f);
 
-        Assert.assertEquals(-1f, dotParamsCopy.getChangeable(START_ANGLE).getValue(), 0.001);
-        Assert.assertEquals(-1f, dotParamsCopy.getChangeable(START_SPEED).getValue(), 0.001);
-        Assert.assertEquals(-1f, dotParamsCopy.getChangeable(GRAVITY).getValue(), 0.001);
+        Assert.assertEquals(10f, dotParamsCopy.getChangeable(START_ANGLE).getValue(), 0.001);
+        Assert.assertEquals(10f, dotParamsCopy.getChangeable(START_SPEED).getValue(), 0.001);
+        Assert.assertEquals(10f, dotParamsCopy.getChangeable(GRAVITY).getValue(), 0.001);
     }
 
     @Test

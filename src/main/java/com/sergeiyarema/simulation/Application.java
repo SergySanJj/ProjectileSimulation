@@ -42,7 +42,7 @@ public class Application extends SimpleApplication {
     }
 
     public AppSettings getSettings() {
-        return getSettings();
+        return super.settings;
     }
 
     public synchronized boolean isReady() {
