@@ -11,7 +11,6 @@ import com.jme3.scene.control.AbstractControl;
 import com.jme3.scene.shape.Sphere;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import static com.sergeiyarema.simulation.DotParams.*;

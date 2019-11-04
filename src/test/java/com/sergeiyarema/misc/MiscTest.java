@@ -4,8 +4,6 @@ import com.jme3.math.Vector2f;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 public class MiscTest {
     private float eps = 0.001f;
 

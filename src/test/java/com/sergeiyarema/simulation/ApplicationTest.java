@@ -1,6 +1,5 @@
 package com.sergeiyarema.simulation;
 
-import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.sergeiyarema.misc.Misc;
@@ -12,27 +11,34 @@ import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.sergeiyarema.simulation.ApplicationControls.*;
 import static com.sergeiyarema.simulation.ParabolicControl.MAX_TRAILS;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
         //can use in method only.
 @interface BeforeAppStart {
-    public boolean enabled() default true;
+    int level = 0;
+
+    boolean enabled() default true;
 }
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
         //can use in method only.
 @interface AfterAppStart {
-    public boolean enabled() default true;
+    int level = 0;
+
+    boolean enabled() default true;
 }
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
         //can use in method only.
 @interface LongTerm {
-    public boolean enabled() default true;
+    int level = 0;
+
+    boolean enabled() default true;
 }
 
 public class ApplicationTest {
@@ -59,6 +65,7 @@ public class ApplicationTest {
 
     private void processAnnotated(Class<? extends Annotation> classRef) {
         int testsRun = 0;
+
         for (Method method : ApplicationTest.class.getDeclaredMethods()) {
             if (method.isAnnotationPresent(classRef)) {
                 try {
@@ -128,20 +135,20 @@ public class ApplicationTest {
     @AfterAppStart
     private void startupObjectsCreated() {
         // Check existence
-        Assert.assertNotNull(app.getControls().getObject("Projectile"));
-        Assert.assertNotNull(app.getControls().getObject("Floor"));
-        Assert.assertNotNull(app.getControls().getObject("Cannon"));
+        Assert.assertNotNull(app.getControls().getObject(PROJECTILE));
+        Assert.assertNotNull(app.getControls().getObject(FLOOR));
+        Assert.assertNotNull(app.getControls().getObject(CANNON));
 
         // Check correct coords
         Assert.assertEquals(app.getControls().getCurrentParams().getStartPos(),
-                app.getControls().getObject("Projectile").getLocalTranslation());
+                app.getControls().getObject(PROJECTILE).getLocalTranslation());
 
 
         Assert.assertEquals(app.getControls().getFloorParams().getStartPos(),
-                app.getControls().getObject("Floor").getLocalTranslation());
+                app.getControls().getObject(FLOOR).getLocalTranslation());
 
         Assert.assertEquals(app.getControls().getCurrentParams().getStartPos(),
-                app.getControls().getObject("Cannon").getLocalTranslation());
+                app.getControls().getObject(CANNON).getLocalTranslation());
     }
 
     @AfterAppStart
@@ -203,6 +210,14 @@ public class ApplicationTest {
         app.getControls().zoom(1 / mult);
         expectedZoom = Misc.bound(expectedZoom / mult, app.getControls().zoomBoundary);
         Assert.assertEquals(expectedZoom, app.getControls().getCameraSize().getValue(), 0.01f);
+
+
+        startCamSize = app.getControls().getCameraSize().getValue();
+        mult = 0.f;
+        app.getControls().zoom(mult);
+        expectedZoom = Misc.bound(startCamSize * mult, app.getControls().zoomBoundary);
+        Assert.assertEquals(expectedZoom, app.getControls().getCameraSize().getValue(), 0.01f);
+
     }
 
     @AfterAppStart
@@ -228,7 +243,7 @@ public class ApplicationTest {
 
         Assert.assertEquals(newExpectedAngle, newParamAngle, 0.01f);
         Assert.assertEquals(newExpectedAngle,
-                app.getControls().getObject("Cannon").getParams().get(DotParams.START_ANGLE), 0.01f);
+                app.getControls().getObject(CANNON).getParams().get(DotParams.START_ANGLE), 0.01f);
     }
 
     @AfterAppStart
@@ -242,17 +257,23 @@ public class ApplicationTest {
 
         Assert.assertEquals(newExpectedAngle, newParamAngle, 0.01f);
         Assert.assertEquals(newExpectedAngle,
-                app.getControls().getObject("Cannon").getParams().get(DotParams.START_ANGLE), 0.01f);
+                app.getControls().getObject(CANNON).getParams().get(DotParams.START_ANGLE), 0.01f);
     }
 
     @LongTerm
-    private void projectileLanding() {
+    private void projectileFLight() {
         app.getControls().setAngle(45);
         app.getControls().fire();
 
-        while (((Projectile) app.getControls().getObject("Projectile")).flying()) ;
+        while (!((Projectile) app.getControls().getObject(PROJECTILE)).flying()) ;
+        // Flight started
+        app.getControls().clearTrajectoryTraces();
+        Assert.assertTrue(ParabolicControl.trailsCount() <= 1);
+
+        while (((Projectile) app.getControls().getObject(PROJECTILE)).flying()) ;
+        // Flight ended
         Assert.assertEquals(app.getControls().getCurrentParams().get(DotParams.GROUND_LEVEL) + app.getControls().getCurrentParams().get(DotParams.RADIUS),
-                ((Projectile) app.getControls().getObject("Projectile")).getLocalTranslation().y, 1f);
+                app.getControls().getObject(PROJECTILE).getLocalTranslation().y, 1f);
     }
 
 }

@@ -6,8 +6,8 @@ import com.jme3.system.AppSettings;
 
 
 public class Application extends SimpleApplication {
-    public static final int WINDOW_HEIGHT = 800;
-    public static final int WINDOW_WIDTH = 1000;
+    private static final int WINDOW_HEIGHT = 800;
+    private static final int WINDOW_WIDTH = 1000;
     private volatile boolean isReady = false;
     private ApplicationControls applicationControls;
 

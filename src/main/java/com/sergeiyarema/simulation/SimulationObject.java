@@ -1,6 +1,5 @@
 package com.sergeiyarema.simulation;
 
-import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;

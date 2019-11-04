@@ -4,8 +4,6 @@ import com.jme3.math.Vector2f;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 public class ChangeableByDeltaTest {
 
     @Test
@@ -19,6 +17,10 @@ public class ChangeableByDeltaTest {
         changeable.setValue(-100f);
         Assert.assertEquals(0f, changeable.getValue(), 0.01);
 
-
+        changeable.setValue(0f);
+        changeable.changeBy(5f);
+        Assert.assertEquals(5f, changeable.getValue(), 0.01);
+        changeable.changeBy(-10f);
+        Assert.assertEquals(0f, changeable.getValue(), 0.01);
     }
 }

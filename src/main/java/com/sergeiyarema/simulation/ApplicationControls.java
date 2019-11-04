@@ -1,10 +1,6 @@
 package com.sergeiyarema.simulation;
 
 import com.jme3.input.InputManager;
-import com.jme3.input.KeyInput;
-import com.jme3.input.controls.ActionListener;
-import com.jme3.input.controls.AnalogListener;
-import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
@@ -13,10 +9,12 @@ import com.jme3.scene.Node;
 import java.util.*;
 
 import static com.sergeiyarema.simulation.DotParams.*;
-import static com.sergeiyarema.simulation.DotParams.START_SPEED;
 
 public class ApplicationControls {
     private static final float GROUND = -5f;
+    public static final String FLOOR = "Floor";
+    public static final String PROJECTILE = "Projectile";
+    public static final String CANNON = "Cannon";
 
     private InputManager inputManager;
     private KeyMapper keyMapper;
@@ -45,9 +43,13 @@ public class ApplicationControls {
         inputManager.setCursorVisible(true);
 
         objects = new HashMap<>();
-        objects.put("Floor", new Floor(getFloorParams(), rootNode));
-        objects.put("Projectile", new Projectile(currentParams, rootNode));
-        objects.put("Cannon", new Cannon(currentParams, rootNode));
+        createObjectScene();
+    }
+
+    private void createObjectScene() {
+        objects.put(FLOOR, new Floor(getFloorParams(), rootNode));
+        objects.put(PROJECTILE, new Projectile(currentParams, rootNode));
+        objects.put(CANNON, new Cannon(currentParams, rootNode));
     }
 
     private void initCameraSettings() {
@@ -59,7 +61,7 @@ public class ApplicationControls {
         updateCameraFrustum();
     }
 
-    public void updateCameraFrustum() {
+    private void updateCameraFrustum() {
         float aspect = (float) cam.getWidth() / cam.getHeight();
         cam.setFrustum(-1000, 1000,
                 -aspect * cameraSize.getValue(), aspect * cameraSize.getValue(),
@@ -77,8 +79,8 @@ public class ApplicationControls {
         currCamLocation.x += delta;
         cam.setLocation(currCamLocation);
 
-        Vector3f currFloor = objects.get("Floor").getLocalTranslation();
-        objects.get("Floor").setLocalTranslation(
+        Vector3f currFloor = objects.get(FLOOR).getLocalTranslation();
+        objects.get(FLOOR).setLocalTranslation(
                 new Vector3f(currCamLocation.x, currFloor.y, currFloor.z));
     }
 
@@ -88,7 +90,7 @@ public class ApplicationControls {
         cam.setLocation(currLocation);
     }
 
-    public void setCamY(float y) {
+    private void setCamY(float y) {
         Vector3f currLocation = cam.getLocation();
         currLocation.y = y;
         cam.setLocation(currLocation);
@@ -104,7 +106,7 @@ public class ApplicationControls {
     }
 
     public void setAngle(float angle) {
-        ((Cannon) getObject("Cannon")).setAngle(angle);
+        ((Cannon) getObject(CANNON)).setAngle(angle);
         setParam(START_ANGLE, angle);
     }
 
@@ -113,7 +115,7 @@ public class ApplicationControls {
     }
 
     public void fire() {
-        ((Projectile) getObject("Projectile")).fire(currentParams);
+        ((Projectile) getObject(PROJECTILE)).fire(currentParams);
     }
 
     public void clearTrajectoryTraces() {
