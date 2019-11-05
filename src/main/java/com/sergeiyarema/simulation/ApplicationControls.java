@@ -22,7 +22,6 @@ public class ApplicationControls {
     private SimulationInfoDisplay display;
     private Camera cam;
     private Node rootNode;
-    private Node guiNode;
 
     public final Vector2f zoomBoundary = new Vector2f(5f, 20f);
     private ChangeableByDelta cameraSize;
@@ -39,7 +38,6 @@ public class ApplicationControls {
         this.inputManager = inputManager;
         this.cam = cam;
         this.rootNode = rootNode;
-        this.guiNode = guiNode;
 
         keyMapper = new KeyMapper(this);
         display = new SimulationInfoDisplay(guiNode, guiFont);
@@ -154,7 +152,11 @@ public class ApplicationControls {
         return cam.getLocation().clone();
     }
 
-    public SimulationInfoDisplay getDisplay(){
+    public SimulationInfoDisplay getDisplay() {
         return display;
+    }
+
+    public KeyMapper getKeyMapper() {
+        return keyMapper;
     }
 }

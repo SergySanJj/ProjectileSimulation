@@ -1,10 +1,9 @@
 package com.sergeiyarema.simulation;
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.font.BitmapText;
 import com.jme3.math.ColorRGBA;
 import com.jme3.system.AppSettings;
-import com.jme3.ui.Picture;
+
 
 
 public class Application extends SimpleApplication {

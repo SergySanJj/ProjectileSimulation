@@ -104,6 +104,11 @@ public class ApplicationTest {
     }
 
     @AfterAppStart
+    private void keysBinded() {
+        Assert.assertNotNull(app.getControls().getKeyMapper());
+    }
+
+    @AfterAppStart
     private void floorCreationTest() {
         Node node = new Node();
         Vector3f floorCoords = Floor.calculateCoordinatesFromTop(100f);
