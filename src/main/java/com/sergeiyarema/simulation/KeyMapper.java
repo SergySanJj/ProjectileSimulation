@@ -45,13 +45,13 @@ public class KeyMapper {
 
         inputManager.addListener(actionListener,
                 FIRE,
-                INCREASE_GRAVITY, DECREASE_GRAVITY,
-                INCREASE_SPEED, DECREASE_SPEED,
                 CLEAR);
         inputManager.addListener(analogListener,
                 ZOOM_IN, ZOOM_OUT,
                 CAM_LEFT, CAM_RIGHT, CAM_UP, CAM_DOWN,
-                INCREASE_ANGLE, DECREASE_ANGLE);
+                INCREASE_ANGLE, DECREASE_ANGLE,
+                INCREASE_GRAVITY, DECREASE_GRAVITY,
+                INCREASE_SPEED, DECREASE_SPEED);
     }
 
     private void addMappings() {
@@ -79,6 +79,9 @@ public class KeyMapper {
 
     private final AnalogListener analogListener = (name, value, tpf) -> {
         value = value * CONTROL_SPEED;
+        float tangelo = 100f * value;
+        float gravityLo = 5f * value;
+        float speedLo = 10f * value;
         switch (name) {
             case ZOOM_IN:
                 appControls.zoom(1.f - 4f * value);
@@ -99,31 +102,33 @@ public class KeyMapper {
                 appControls.verticalCamMove(-5.f * appControls.getCameraSize().getValue() * value);
                 break;
             case INCREASE_ANGLE:
-                appControls.changeAngle(100.f * value);
+                appControls.changeAngle(tangelo);
                 break;
             case DECREASE_ANGLE:
-                appControls.changeAngle(-100.f * value);
+                appControls.changeAngle(-tangelo);
+                break;
+            case INCREASE_GRAVITY:
+                appControls.changeParamByDelta(GRAVITY, gravityLo);
+                break;
+            case DECREASE_GRAVITY:
+                appControls.changeParamByDelta(GRAVITY, -gravityLo);
+                break;
+            case INCREASE_SPEED:
+                appControls.changeParamByDelta(START_SPEED, speedLo);
+                break;
+            case DECREASE_SPEED:
+                appControls.changeParamByDelta(START_SPEED, -speedLo);
                 break;
             default:
                 break;
         }
+
+        appControls.getDisplay().updateInfo(appControls.getCurrentParams());
     };
 
     private final ActionListener actionListener = (name, keyPressed, tpf) -> {
         if (!keyPressed) {
             switch (name) {
-                case INCREASE_GRAVITY:
-                    appControls.changeParamByDelta(GRAVITY, 1.f);
-                    break;
-                case DECREASE_GRAVITY:
-                    appControls.changeParamByDelta(GRAVITY, -1.f);
-                    break;
-                case INCREASE_SPEED:
-                    appControls.changeParamByDelta(START_SPEED, 1f);
-                    break;
-                case DECREASE_SPEED:
-                    appControls.changeParamByDelta(START_SPEED, -1f);
-                    break;
                 case FIRE:
                     appControls.fire();
                     break;
@@ -134,5 +139,7 @@ public class KeyMapper {
                     break;
             }
         }
+
+        appControls.getDisplay().updateInfo(appControls.getCurrentParams());
     };
 }

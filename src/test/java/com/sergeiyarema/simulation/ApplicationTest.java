@@ -260,6 +260,12 @@ public class ApplicationTest {
                 app.getControls().getObject(CANNON).getParams().get(DotParams.START_ANGLE), 0.01f);
     }
 
+    @AfterAppStart
+    private void display() {
+        app.getControls().getDisplay().setText("test");
+        Assert.assertEquals("test", app.getControls().getDisplay().getText());
+    }
+
     @LongTerm
     private void projectileFLight() {
         app.getControls().setAngle(45);

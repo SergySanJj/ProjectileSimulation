@@ -1,5 +1,6 @@
 package com.sergeiyarema.simulation;
 
+import com.jme3.font.BitmapFont;
 import com.jme3.input.InputManager;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -18,8 +19,10 @@ public class ApplicationControls {
 
     private InputManager inputManager;
     private KeyMapper keyMapper;
+    private SimulationInfoDisplay display;
     private Camera cam;
     private Node rootNode;
+    private Node guiNode;
 
     public final Vector2f zoomBoundary = new Vector2f(5f, 20f);
     private ChangeableByDelta cameraSize;
@@ -32,18 +35,21 @@ public class ApplicationControls {
     private ApplicationControls() {
     }
 
-    public ApplicationControls(InputManager inputManager, Camera cam, Node rootNode) {
+    public ApplicationControls(InputManager inputManager, Camera cam, Node rootNode, Node guiNode, BitmapFont guiFont) {
         this.inputManager = inputManager;
         this.cam = cam;
         this.rootNode = rootNode;
+        this.guiNode = guiNode;
 
         keyMapper = new KeyMapper(this);
+        display = new SimulationInfoDisplay(guiNode, guiFont);
 
         initCameraSettings();
         inputManager.setCursorVisible(true);
 
         objects = new HashMap<>();
         createObjectScene();
+        getDisplay().updateInfo(getCurrentParams());
     }
 
     private void createObjectScene() {
@@ -146,5 +152,9 @@ public class ApplicationControls {
 
     public Vector3f getCameraCoordinates() {
         return cam.getLocation().clone();
+    }
+
+    public SimulationInfoDisplay getDisplay(){
+        return display;
     }
 }

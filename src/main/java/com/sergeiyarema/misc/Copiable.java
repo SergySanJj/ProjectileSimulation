@@ -1,4 +1,4 @@
-package com.sergeiyarema.simulation;
+package com.sergeiyarema.misc;
 
 public interface Copiable<T> {
     T copy();
